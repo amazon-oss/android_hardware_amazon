@@ -34,7 +34,8 @@ static void set(const std::string& path, const T& value) {
 }
 
 // Methods from ::android::hardware::power::V1_0::IPower follow.
-Return<void> Power::setInteractive(bool /* interactive */) {
+Return<void> Power::setInteractive(bool interactive) {
+    set(kIoBusyPath, interactive ? "1" : "0");
     return Void();
 }
 
