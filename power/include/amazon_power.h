@@ -18,3 +18,4 @@
 
 const std::string kRushBoostPath     = "/proc/hps/rush_boost_enabled";
 const std::string kFpsUpperBoundPath = "/d/ged/hal/fps_upper_bound"; 
+const std::string kIoBusyPath        = "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy";
