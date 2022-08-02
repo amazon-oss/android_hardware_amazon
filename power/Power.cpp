@@ -33,6 +33,10 @@ static void set(const std::string& path, const T& value) {
     file << value << std::endl;
 }
 
+static void setDynamicBoost(const DynamicBoostMode mode, const int32_t durationMs) {
+    set(kDynamicBoostPath, std::to_string(durationMs) + " " + std::to_string(static_cast<int32_t>(mode)));
+}
+
 // Methods from ::android::hardware::power::V1_0::IPower follow.
 Return<void> Power::setInteractive(bool interactive) {
     set(kIoBusyPath, interactive ? "1" : "0");
@@ -49,6 +53,17 @@ Return<void> Power::powerHint(PowerHint_1_0 hint, int32_t data) {
                 set(kRushBoostPath, "1");
                 set(kFpsUpperBoundPath, "60");
             }
+            break;
+        case PowerHint_1_0::INTERACTION:
+            if (data < 1)
+                return Void();
+            setDynamicBoost(DynamicBoostMode::PRIO_TWO_LITTLES_MAX_FREQ, data);
+            break;
+        case PowerHint_1_0::LAUNCH:
+            if (data > 0)
+                setDynamicBoost(DynamicBoostMode::PRIO_MAX_CORES_MAX_FREQ, 5000);
+            else
+                setDynamicBoost(DynamicBoostMode::PRIO_RESET, 0);
             break;
         default:
             break;
