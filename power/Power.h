@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 The Android Open Source Project
+ * Copyright (C) 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,51 +16,53 @@
 
 #pragma once
 
-#include <android/hardware/power/1.3/IPower.h>
-#include <hidl/MQDescriptor.h>
-#include <hidl/Status.h>
+#include <aidl/android/hardware/power/BnPower.h>
 
+namespace aidl {
 namespace android {
 namespace hardware {
 namespace power {
-namespace V1_3 {
-namespace implementation {
+namespace impl {
+namespace mt8163 {
 
-using ::android::hardware::power::V1_0::Status;
-using ::android::hardware::power::V1_0::Feature;
-using ::android::hardware::power::V1_3::IPower;
-using PowerHint_1_0 = ::android::hardware::power::V1_0::PowerHint;
-using PowerHint_1_2 = ::android::hardware::power::V1_2::PowerHint;
-using PowerHint_1_3 = ::android::hardware::power::V1_3::PowerHint;
+const std::string kRushBoostPath     = "/proc/hps/rush_boost_enabled";
+const std::string kFpsUpperBoundPath = "/d/ged/hal/fps_upper_bound"; 
+const std::string kIoBusyPath        = "/sys/devices/system/cpu/cpufreq/interactive/io_is_busy";
+const std::string kDynamicBoostPath  = "/sys/devices/platform/dynamic_boost/dynamic_boost";
 
-using ::android::hardware::hidl_array;
-using ::android::hardware::hidl_memory;
-using ::android::hardware::hidl_string;
-using ::android::hardware::hidl_vec;
-using ::android::hardware::Return;
-using ::android::hardware::Void;
-using ::android::sp;
+typedef enum DynamicBoostMode {
+	PRIO_TWO_LITTLES,
+	PRIO_TWO_LITTLES_MAX_FREQ,
+	PRIO_ONE_BIG,
+	PRIO_ONE_BIG_MAX_FREQ,
+	PRIO_ONE_BIG_ONE_LITTLE,
+	PRIO_ONE_BIG_ONE_LITTLE_MAX_FREQ,
+	PRIO_TWO_BIGS,
+	PRIO_TWO_BIGS_MAX_FREQ,
+	PRIO_THREE_LITTLES,
+	PRIO_THREE_LITTLES_MAX_FREQ,
+	PRIO_FOUR_LITTLES,
+	PRIO_FOUR_LITTLES_MAX_FREQ,
+	PRIO_TWO_BIGS_TWO_LITTLES,
+	PRIO_TWO_BIGS_TWO_LITTLES_MAX_FREQ,
+	PRIO_FOUR_BIGS,
+	PRIO_FOUR_BIGS_MAX_FREQ,
+	PRIO_MAX_CORES,
+	PRIO_MAX_CORES_MAX_FREQ,
+	PRIO_RESET,
+	PRIO_DEFAULT
+} DynamicBoostMode;
 
-struct Power : public IPower {
-    // Methods from ::android::hardware::power::V1_0::IPower follow.
-    Return<void> setInteractive(bool interactive) override;
-    Return<void> powerHint(PowerHint_1_0 hint, int32_t data) override;
-    Return<void> setFeature(Feature feature, bool activate) override;
-    Return<void> getPlatformLowPowerStats(getPlatformLowPowerStats_cb _hidl_cb) override;
-
-    // Methods from ::android::hardware::power::V1_1::IPower follow.
-    Return<void> getSubsystemLowPowerStats(getSubsystemLowPowerStats_cb _hidl_cb) override;
-    Return<void> powerHintAsync(PowerHint_1_0 hint, int32_t data) override;
-
-    // Methods from ::android::hardware::power::V1_2::IPower follow.
-    Return<void> powerHintAsync_1_2(PowerHint_1_2 hint, int32_t data) override;
-
-    // Methods from ::android::hardware::power::V1_3::IPower follow.
-    Return<void> powerHintAsync_1_3(PowerHint_1_3 hint, int32_t data) override;
+class Power : public BnPower {
+    ndk::ScopedAStatus setMode(Mode type, bool enabled) override;
+    ndk::ScopedAStatus isModeSupported(Mode type, bool* _aidl_return) override;
+    ndk::ScopedAStatus setBoost(Boost type, int32_t durationMs) override;
+    ndk::ScopedAStatus isBoostSupported(Boost type, bool* _aidl_return) override;
 };
 
-}  // namespace implementation
-}  // namespace V1_3
+}  // namespace mt8163
+}  // namespace impl
 }  // namespace power
 }  // namespace hardware
 }  // namespace android
+}  // namespace aidl
