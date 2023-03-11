@@ -21,7 +21,10 @@
 #include <fstream>
 
 #define LCD_LED         "/sys/class/leds/lcd-backlight/"
+#define NOTIFICATION_LED         "/sys/class/leds/white/"
 
+#define LED_BRIGHTNESS_ON 8
+#define LED_BRIGHTNESS_OFF 0
 #define BRIGHTNESS      "brightness"
 #define MAX_BRIGHTNESS  "max_brightness"
 
@@ -96,6 +99,22 @@ static inline uint32_t getScaledBrightness(const HwLightState& state, uint32_t m
     return scaleBrightness(getBrightness(state), maxBrightness);
 }
 
+static int is_lit(const HwLightState& state)
+{
+    return state.color & 0x00ffffff;
+}
+
+static void handleNotiflight(const HwLightState& state) {
+    uint32_t brightness;
+
+    if(is_lit(state)) {
+        brightness = LED_BRIGHTNESS_ON;
+    } else {
+        brightness = LED_BRIGHTNESS_OFF;
+    }
+    set(NOTIFICATION_LED BRIGHTNESS, brightness);
+}
+
 static void handleBacklight(const HwLightState& state) {
     uint32_t brightness = getScaledBrightness(state, getMaxBrightness(LCD_LED MAX_BRIGHTNESS));
     LOG(DEBUG) << "Setting brightness: " << brightness;
@@ -104,7 +123,10 @@ static void handleBacklight(const HwLightState& state) {
 
 /* Keep sorted in the order of importance. */
 static std::vector<LightType> backends = {
+    LightType::ATTENTION,
     LightType::BACKLIGHT,
+    LightType::BATTERY,
+    LightType::NOTIFICATIONS,
 };
 
 }  // anonymous namespace
@@ -116,8 +138,17 @@ namespace light {
 
 ndk::ScopedAStatus Lights::setLightState(int id, const HwLightState& state) {
     switch(id) {
+        case (int) LightType::ATTENTION:
+            handleNotiflight(state);
+            return ndk::ScopedAStatus::ok();
         case (int) LightType::BACKLIGHT:
             handleBacklight(state);
+            return ndk::ScopedAStatus::ok();
+        case (int) LightType::BATTERY:
+            handleNotiflight(state);
+            return ndk::ScopedAStatus::ok();
+        case (int) LightType::NOTIFICATIONS:
+            handleNotiflight(state);
             return ndk::ScopedAStatus::ok();
         default:
             return ndk::ScopedAStatus::fromExceptionCode(EX_UNSUPPORTED_OPERATION);
