@@ -10,3 +10,9 @@ cc_library_shared {
     ],
     include_dirs: [ "system/keymaster/include" ],
 }
+
+cc_library_shared {
+    name: "libunwindstack_shim",
+    srcs: ["libunwindstack/Maps.cpp"],
+    proprietary: true,
+}
