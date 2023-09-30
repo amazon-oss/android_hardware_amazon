@@ -1,0 +1,12 @@
+cc_library_shared {
+    name: "libamazonlog",
+    proprietary: true,
+    defaults: ["hidl_defaults"],
+    srcs: [
+        "metrics_logd_writer.c",
+        "logd_writer.c",
+    ],
+    shared_libs: [
+        "liblog",
+    ],
+}
