@@ -6,6 +6,13 @@ cc_library_shared {
 }
 
 cc_library_shared {
+    name: "libhwbinder_shim",
+    srcs: ["libhwbinder/IPCThreadState.cpp"],
+    shared_libs: ["libbinder"],
+    proprietary: true,
+}
+
+cc_library_shared {
     name: "libkeymaster_messages_shim",
     srcs: ["libkeymaster_messages/android_keymaster_messages.cpp"],
     vendor: true,
