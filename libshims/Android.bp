@@ -1,4 +1,11 @@
 cc_library_shared {
+    name: "libgatekeeper_shim",
+    srcs: ["libgatekeeper/gatekeeper_messages.cpp"],
+    shared_libs: ["libgatekeeper"],
+    proprietary: true,
+}
+
+cc_library_shared {
     name: "libkeymaster_messages_shim",
     srcs: ["libkeymaster_messages/android_keymaster_messages.cpp"],
     vendor: true,
