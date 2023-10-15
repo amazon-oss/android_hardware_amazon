@@ -1,0 +1,12 @@
+package fireos.hardware.idme@1.0;
+
+interface IIdme {
+    getBtMacAddress() generates (string macAddr);
+    getBtMfg() generates (string Mfg);
+    getDeviceTypeId() generates (string deviceTypeId);
+    getMacAddress() generates (string macAddr);
+    getProductName() generates (string productName);
+    getSecret() generates (string secret);
+    getSerialNumber() generates (string serialNumber);
+};
+
