@@ -1,0 +1,5 @@
+service vendor.amazon_init /vendor/bin/amazon_init
+    class main
+    user root
+    group system
+    oneshot
