@@ -1,0 +1,18 @@
+//
+// Copyright (C) 2024 The LineageOS Project
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_binary {
+    name: "amazon_init",
+    init_rc: ["amazon_init.rc"],
+    srcs: [
+        "amazon_utils.cpp",
+        "amazon_init.cpp",
+        "amazon_amonet.cpp"
+    ],
+    shared_libs: ["libbase"],
+    vendor: true,
+    recovery_available: true,
+}
