@@ -1,3 +1,9 @@
+cc_library_shared {
+    name: "libcutils_shim",
+    srcs: ["libcutils/atomic.cpp"],
+    shared_libs: ["libcutils"],
+}
+
 cc_library {
     name: "libmemset_shim",
     vendor: true,
