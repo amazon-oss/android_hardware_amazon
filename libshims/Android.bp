@@ -13,6 +13,15 @@ cc_library_shared {
     shared_libs: ["libcutils"],
 }
 
+cc_library_shared {
+    name: "libgui_shim",
+    srcs: ["libgui/SurfaceComposerClient.cpp"],
+    shared_libs: [
+        "libgui",
+        "libutils",
+    ],
+}
+
 cc_library {
     name: "libmemset_shim",
     vendor: true,
