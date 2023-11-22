@@ -1,4 +1,13 @@
 cc_library_shared {
+    name: "libbinder_shim",
+    srcs: ["libbinder/IInterface.cpp"],
+    shared_libs: [
+        "libbinder",
+        "libutils",
+    ],
+}
+
+cc_library_shared {
     name: "libcutils_shim",
     srcs: ["libcutils/atomic.cpp"],
     shared_libs: ["libcutils"],
