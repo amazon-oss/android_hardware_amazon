@@ -2,7 +2,9 @@
 #include <ui/PixelFormat.h>
 #include <ui/Rect.h>
 #include <gui/SurfaceControl.h>
+#include <gui/SurfaceComposerClient.h>
 
+android::SurfaceComposerClient::Transaction *t;
 
 namespace android {
 
@@ -43,6 +45,16 @@ void _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8Ejjij(
         uint32_t flags)
 {
 return _ZN7android21SurfaceComposerClient13createSurfaceERKNS_7String8EjjijPNS_14SurfaceControlEjj(name, w, h, format, flags, nullptr, 0, 0);
+}
+
+void _ZN7android21SurfaceComposerClient21openGlobalTransactionEv() {
+    t = new(android::SurfaceComposerClient::Transaction);
+}
+
+void _ZN7android21SurfaceComposerClient22closeGlobalTransactionEb(bool synchronous __unused)  {
+    t->apply();
+    delete t;
+    t = nullptr;
 }
 
 }
