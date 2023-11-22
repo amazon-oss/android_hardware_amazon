@@ -1,0 +1,10 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+LOCAL_SRC_FILES := libbinder/IInterface.cpp
+LOCAL_SHARED_LIBRARIES := libbinder libutils
+LOCAL_MODULE := libbinder_shim
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PROPRIETARY_MODULE := true
+include $(BUILD_SHARED_LIBRARY)
