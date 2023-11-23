@@ -499,7 +499,7 @@ int sensors_poll_context_t::close() {
 static int device__close(struct hw_device_t *dev) {
     sensors_poll_context_t* ctx = (sensors_poll_context_t*) dev;
     if (ctx != NULL) {
-        int retval = ctx->close();
+        ctx->close();
         delete ctx;
     }
     return 0;
@@ -526,7 +526,6 @@ static int device__activate(struct sensors_poll_device_t *dev, int handle,
 static int device__setDelay(struct sensors_poll_device_t *dev, int handle,
         int64_t ns) {
     sensors_poll_context_t* ctx = (sensors_poll_context_t*) dev;
-    ALOGI("Called device__setDelay: handle: %d, ns: %lld", handle, ns);
     return ctx->setDelay(handle, ns);
 }
 
@@ -538,8 +537,6 @@ static int device__poll(struct sensors_poll_device_t *dev, sensors_event_t* data
 
 static int device__batch(struct sensors_poll_device_1 *dev, int handle,
         int flags, int64_t period_ns, int64_t timeout) {
-    ALOGI("Called device__batch: handle %d, flags: %d, period_ns %lld, timeout %lld",
-            handle, flags, period_ns, timeout);
     sensors_poll_context_t* ctx = (sensors_poll_context_t*) dev;
     if (halIsAPILevelCompliant(ctx, handle, SENSORS_DEVICE_API_VERSION_1_1)) {
         return ctx->batch(handle, flags, period_ns, timeout);
@@ -555,7 +552,6 @@ static int device__batch(struct sensors_poll_device_1 *dev, int handle,
         //skip setDelay() if sensors haven't been activated, or SystemUI will freeze and die.
         return 0;
     }
-    ALOGW("%s: fall back to v0->setDelay: handle %d, period_ns %lld", __func__, handle, period_ns);
     return ctx->setDelay(handle, period_ns);
 }
 
@@ -572,15 +568,6 @@ static int device__inject_sensor_data(struct sensors_poll_device_1 *dev,
 
 static int open_sensors(const struct hw_module_t* module, const char* name,
         struct hw_device_t** device);
-
-static bool starts_with(const char* s, const char* prefix) {
-    if (s == NULL || prefix == NULL) {
-        return false;
-    }
-    size_t s_size = strlen(s);
-    size_t prefix_size = strlen(prefix);
-    return s_size >= prefix_size && strncmp(s, prefix, prefix_size) == 0;
-}
 
 /*
  * Adds valid paths from the config file to the vector passed in.
