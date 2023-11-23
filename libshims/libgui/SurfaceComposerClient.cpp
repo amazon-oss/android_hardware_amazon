@@ -62,3 +62,4 @@ void _ZN7android21SurfaceComposerClient22closeGlobalTransactionEb(bool synchrono
 // ---------------------------------------------------------------------------
 
 }; // namespace android
+
