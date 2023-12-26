@@ -16,10 +16,12 @@ cc_library_shared {
 cc_library_shared {
     name: "libgui_shim",
     srcs: [
+        "libgui/BufferQueue.cpp",
         "libgui/SurfaceControl.cpp",
         "libgui/SurfaceComposerClient.cpp",
     ],
     shared_libs: [
+        "libbinder",
         "libgui",
         "libui",
         "libutils",
