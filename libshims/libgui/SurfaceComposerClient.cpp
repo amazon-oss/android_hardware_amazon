@@ -57,6 +57,12 @@ void _ZN7android21SurfaceComposerClient22closeGlobalTransactionEb(bool synchrono
     t = nullptr;
 }
 
+void _ZN7android21SurfaceComposerClient23getInternalDisplayTokenEv(void);
+
+void _ZN7android21SurfaceComposerClient17getBuiltInDisplayEi(int32_t id __unused){
+    _ZN7android21SurfaceComposerClient23getInternalDisplayTokenEv();
+}
+
 }
 
 // ---------------------------------------------------------------------------
