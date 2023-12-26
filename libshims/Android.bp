@@ -17,6 +17,7 @@ cc_library_shared {
     name: "libgui_shim",
     srcs: [
         "libgui/BufferQueue.cpp",
+        "libgui/Fence.cpp",
         "libgui/SurfaceControl.cpp",
         "libgui/SurfaceComposerClient.cpp",
     ],
