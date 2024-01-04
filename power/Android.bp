@@ -13,10 +13,10 @@
 // limitations under the License.
 
 cc_binary {
-    name: "android.hardware.power-service.mt8163",
+    name: "android.hardware.power-service.amazon",
     relative_install_path: "hw",
-    init_rc: ["power-mt8163.rc"],
-    vintf_fragments: ["power-mt8163.xml"],
+    init_rc: ["power-amazon.rc"],
+    vintf_fragments: ["power-amazon.xml"],
     vendor: true,
     shared_libs: [
         "libbase",
