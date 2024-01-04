@@ -23,7 +23,7 @@ namespace android {
 namespace hardware {
 namespace power {
 namespace impl {
-namespace mt8163 {
+namespace amazon {
 
 const std::string kRushBoostPath     = "/proc/hps/rush_boost_enabled";
 const std::string kFpsUpperBoundPath = "/d/ged/hal/fps_upper_bound"; 
@@ -60,7 +60,7 @@ class Power : public BnPower {
     ndk::ScopedAStatus isBoostSupported(Boost type, bool* _aidl_return) override;
 };
 
-}  // namespace mt8163
+}  // namespace amazon
 }  // namespace impl
 }  // namespace power
 }  // namespace hardware

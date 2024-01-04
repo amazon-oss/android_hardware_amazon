@@ -25,7 +25,7 @@ namespace android {
 namespace hardware {
 namespace power {
 namespace impl {
-namespace mt8163 {
+namespace amazon {
 
 template <typename T>
 static void set(const std::string& path, const T& value) {
@@ -112,7 +112,7 @@ ndk::ScopedAStatus Power::isBoostSupported(Boost type, bool* _aidl_return) {
     return ndk::ScopedAStatus::ok();
 }
 
-}  // namespace mt8163
+}  // namespace amazon
 }  // namespace impl
 }  // namespace power
 }  // namespace hardware

@@ -1,0 +1,4 @@
+service vendor.power-amazon /vendor/bin/hw/android.hardware.power-service.amazon
+    class hal
+    user nobody
+    group system
