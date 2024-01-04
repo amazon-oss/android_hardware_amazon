@@ -98,3 +98,9 @@ cc_library_shared {
     ],
     shared_libs: ["libui"],
 }
+
+cc_library_shared {
+    name: "libutils_shim",
+    srcs: ["libutils/Threads.cpp"],
+    shared_libs: ["libutils"],
+}
