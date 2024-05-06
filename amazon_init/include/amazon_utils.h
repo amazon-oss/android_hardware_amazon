@@ -8,6 +8,7 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include <unistd.h>
 #include <stdio.h>
@@ -23,4 +24,11 @@
         symlink(target, link); \
     } while (0)
 
+template <typename T>
+static void set(const std::string& path, const T& value) {
+    std::ofstream file(path);
+    file << value << std::endl;
+}
+
+std::string parse_mac(const std::string& mac);
 const char* resolve_symlink(const std::string& path);

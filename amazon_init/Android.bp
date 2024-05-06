@@ -9,6 +9,7 @@ cc_binary {
     init_rc: ["amazon_init.rc"],
     srcs: [
         "amazon_utils.cpp",
+        "amazon_idme.cpp",
         "amazon_init.cpp",
         "amazon_amonet.cpp"
     ],
