@@ -1,0 +1,9 @@
+[submodule "2ndinit/libarchive"]
+	path = 2ndinit/libarchive
+	url = https://github.com/libarchive/libarchive.git
+[submodule "2ndinit/libsepol"]
+	path = 2ndinit/libsepol
+	url = https://android.googlesource.com/platform/external/libsepol
+[submodule "2ndinit/lzma"]
+	path = 2ndinit/lzma
+	url = http://git.tukaani.org/lzma.git
