@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -26,10 +27,13 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
+#include <cutils/properties.h>
+
 #define DYNAMIC_BOOST_PATH "/sys/devices/platform/dynamic_boost/dynamic_boost"
 #define MAX_BUF_SZ 15
 #define LAUNCH_BOOST_TIME 5000 /* ms */
 #define INTERACTION_BOOST_TIME 200 /* ms */
+#define POWER_PROFILE_PROP "sys.perf.profile"
 
 typedef enum {
   PRIO_TWO_LITTLES,
@@ -72,6 +76,12 @@ static void power_set_interactive(struct power_module *module __unused, int on)
 
 static void power_hint(struct power_module *module __unused, power_hint_t hint,
                        void *data __unused) {
+    char profile[PROPERTY_VALUE_MAX];
+
+    property_get(POWER_PROFILE_PROP, profile, "0");
+    if (atoi(profile) == 2)
+        return;
+
     switch (hint) {
 #ifndef HAS_TOUCH_BOOST
     case POWER_HINT_LAUNCH_BOOST:
