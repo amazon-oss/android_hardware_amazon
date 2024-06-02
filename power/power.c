@@ -69,9 +69,17 @@ static void power_init(struct power_module *module __unused)
     return;
 }
 
-static void power_set_interactive(struct power_module *module __unused, int on)
-{
+static void power_set_interactive(struct power_module *module __unused, int on) {
     ALOGD("%s: %s", __func__, (on ? "ON" : "OFF"));
+    if (on) {
+        char profile[PROPERTY_VALUE_MAX];
+        property_get(POWER_PROFILE_PROP, profile, "0");
+
+        if (atoi(profile) == 2) {
+            ALOGD("%s: Restore indefinite dynamic boost for performance mode", __func__);
+            power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, -1);
+        }
+    }
 }
 
 static void power_hint(struct power_module *module __unused, power_hint_t hint,
