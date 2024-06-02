@@ -30,6 +30,11 @@
 #include <cutils/properties.h>
 
 #define DYNAMIC_BOOST_PATH "/sys/devices/platform/dynamic_boost/dynamic_boost"
+static const char *io_is_busy[] = {
+    "/sys/devices/system/cpu/cpu0/cpufreq/ondemand/io_is_busy",
+    "/sys/devices/system/cpu/cpu2/cpufreq/ondemand/io_is_busy"
+};
+
 #define MAX_BUF_SZ 15
 #define LAUNCH_BOOST_TIME 5000 /* ms */
 #define INTERACTION_BOOST_TIME 200 /* ms */
@@ -44,6 +49,20 @@ typedef enum {
   /* Define the max priority for priority limit */
   PRIO_DEFAULT
 } dynamic_boost_mode_t;
+
+static void sysfs_write(const char *path, const char *s) {
+    int fd = open(path, O_WRONLY);
+    if (fd < 0) {
+        ALOGE("Unable to open %s: %s", path, strerror(errno));
+        return;
+    }
+
+    if (write(fd, s, strlen(s)) < 0) {
+        ALOGE("Failed to write to %s: %s", path, strerror(errno));
+    }
+
+    close(fd);
+}
 
 static void power_set_dynamic_boost(dynamic_boost_mode_t mode, int durationMs)
 {
@@ -70,15 +89,20 @@ static void power_init(struct power_module *module __unused)
 }
 
 static void power_set_interactive(struct power_module *module __unused, int on) {
-    ALOGD("%s: %s", __func__, (on ? "ON" : "OFF"));
-    if (on) {
-        char profile[PROPERTY_VALUE_MAX];
-        property_get(POWER_PROFILE_PROP, profile, "0");
+    ALOGD("%s: %s", __func__, on ? "ON" : "OFF");
 
-        if (atoi(profile) == 2) {
-            ALOGD("%s: Restore indefinite dynamic boost for performance mode", __func__);
-            power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, -1);
+    char profile[PROPERTY_VALUE_MAX];
+    property_get(POWER_PROFILE_PROP, profile, "0");
+
+    if (atoi(profile) == 1) {
+        size_t i = 0;
+        for (i = 0; i < sizeof(io_is_busy) / sizeof(io_is_busy[0]); i++) {
+            sysfs_write(io_is_busy[i], (on ? "1" : "0"));
+            ALOGD("%s: Set %s to %s", __func__, io_is_busy[i], (on ? "1" : "0"));
         }
+    } else if (atoi(profile) == 2 && on) {
+        ALOGD("%s: Restore indefinite dynamic boost for performance mode", __func__);
+        power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, -1);
     }
 }
 
