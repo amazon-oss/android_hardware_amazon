@@ -39,7 +39,8 @@ LOCAL_SRC_FILES := \
 	common.cpp \
 	cpp_bindings.cpp \
 	gscan.cpp \
-	link_layer_stats.cpp
+	link_layer_stats.cpp \
+	wifi_offload.cpp
 
 LOCAL_MODULE := libwifi-hal-mt66xx
 

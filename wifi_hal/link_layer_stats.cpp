@@ -41,7 +41,7 @@ public:
     { }
 
     virtual int create() {
-        //ALOGD("[WIFI HAL]Creating message to get link statistics; iface = %d", mIfaceInfo->id);
+        ALOGD("[WIFI HAL]Creating message to get link statistics; iface = %d", mIfaceInfo->id);
 
         int ret = mMsg.create(GOOGLE_OUI, LSTATS_SUBCMD_GET_INFO);
         if (ret < 0) {
@@ -54,7 +54,7 @@ public:
 
 protected:
     virtual int handleResponse(WifiEvent& reply) {
-        //ALOGD("[WIFI HAL]In GetLinkStatsCommand::handleResponse");
+        ALOGD("[WIFI HAL]In GetLinkStatsCommand::handleResponse");
 
         if (reply.get_cmd() != NL80211_CMD_VENDOR) {
             ALOGE("Ignoring reply with cmd = %d", reply.get_cmd());
@@ -72,6 +72,8 @@ protected:
 
         if(vendor_data->nla_type == NL80211_ATTR_VENDOR_LLSTAT)
             data = (wifi_radio_stat *)nla_data(vendor_data);
+        else
+            return NL_SKIP;
         int num_chan = data->num_channels;
         if (num_chan > 32) {
            ALOGE("Incorrect number of channels = %d", num_chan);
