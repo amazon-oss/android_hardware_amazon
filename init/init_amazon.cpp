@@ -31,6 +31,7 @@
 #include <private/android_filesystem_config.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
