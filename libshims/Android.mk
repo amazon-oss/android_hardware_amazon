@@ -10,7 +10,7 @@ LOCAL_PROPRIETARY_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_SRC_FILES := libui/GraphicBuffer.cpp
+LOCAL_SRC_FILES := libui/GraphicBuffer.cpp libui/GraphicBufferMapper.cpp
 LOCAL_SHARED_LIBRARIES := libui
 LOCAL_MODULE := libui_shim
 LOCAL_MODULE_TAGS := optional
