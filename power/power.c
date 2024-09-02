@@ -27,11 +27,8 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#define DYNAMIC_BOOST_PATH "/sys/devices/platform/dynamic_boost/dynamic_boost"
 #define NUM_POLICIES 2
 #define MAX_BUF_SZ 64
-#define LAUNCH_BOOST_TIME 5000 /* ms */
-#define INTERACTION_BOOST_TIME 200 /* ms */
 
 static const char *scaling_governor_paths[NUM_POLICIES] = {
     "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
@@ -44,16 +41,6 @@ static const char *io_is_busy_paths[NUM_POLICIES] = {
 };
 
 static char governor[NUM_POLICIES][MAX_BUF_SZ];
-
-typedef enum {
-  PRIO_TWO_LITTLES,
-  PRIO_TWO_LITTLES_MAX_FREQ,
-  PRIO_MAX_CORES,
-  PRIO_MAX_CORES_MAX_FREQ,
-  PRIO_RESET,
-  /* Define the max priority for priority limit */
-  PRIO_DEFAULT
-} dynamic_boost_mode_t;
 
 static void sysfs_write(const char *path, const char *s) {
     int fd = open(path, O_WRONLY);
@@ -108,25 +95,6 @@ static int get_scaling_governor() {
     return rc;
 }
 
-static void power_set_dynamic_boost(dynamic_boost_mode_t mode, int durationMs)
-{
-    int fd;
-    char buf[MAX_BUF_SZ];
-
-    fd = open(DYNAMIC_BOOST_PATH, O_WRONLY);
-    if (fd < 0) {
-        ALOGE("Unable to open %s: %s\n", DYNAMIC_BOOST_PATH, strerror(errno));
-        return;
-    }
-
-    snprintf(buf, sizeof(buf), "%d %d\n", durationMs, mode);
-    if (write(fd, buf, strlen(buf)) < 0) {
-        ALOGE("Unable to write to %s: %s\n", DYNAMIC_BOOST_PATH, strerror(errno));
-    }
-
-    close(fd);
-}
-
 static void set_io_is_busy(int busy) {
     int rc;
     char path[MAX_BUF_SZ];
@@ -155,20 +123,8 @@ static void power_set_interactive(struct power_module *module __unused, int on) 
     set_io_is_busy(on);
 }
 
-static void power_hint(struct power_module *module __unused, power_hint_t hint,
+static void power_hint(struct power_module *module __unused, power_hint_t hint __unused,
                        void *data __unused) {
-    switch (hint) {
-#ifndef HAS_TOUCH_BOOST
-    case POWER_HINT_LAUNCH_BOOST:
-        power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, LAUNCH_BOOST_TIME);
-        break;
-#endif
-    case POWER_HINT_INTERACTION:
-        power_set_dynamic_boost(PRIO_TWO_LITTLES_MAX_FREQ, INTERACTION_BOOST_TIME);
-        break;
-    default:
-        break;
-    }
 }
 
 static void power_set_feature(struct power_module *module __unused, feature_t feature,
