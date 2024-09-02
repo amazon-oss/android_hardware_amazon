@@ -27,14 +27,11 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#include <cutils/properties.h>
-
 #define DYNAMIC_BOOST_PATH "/sys/devices/platform/dynamic_boost/dynamic_boost"
 #define NUM_POLICIES 2
 #define MAX_BUF_SZ 64
 #define LAUNCH_BOOST_TIME 5000 /* ms */
 #define INTERACTION_BOOST_TIME 200 /* ms */
-#define POWER_PROFILE_PROP "sys.perf.profile"
 
 static const char *scaling_governor_paths[NUM_POLICIES] = {
     "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
@@ -155,25 +152,11 @@ static void power_init(struct power_module *module __unused)
 static void power_set_interactive(struct power_module *module __unused, int on) {
     ALOGD("%s: %s", __func__, on ? "ON" : "OFF");
 
-    char profile[PROPERTY_VALUE_MAX];
-    property_get(POWER_PROFILE_PROP, profile, "0");
-
-    if (atoi(profile) == 1) {
-        set_io_is_busy(on);
-    } else if (atoi(profile) == 2 && on) {
-        ALOGD("%s: Restore indefinite dynamic boost for performance mode", __func__);
-        power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, -1);
-    }
+    set_io_is_busy(on);
 }
 
 static void power_hint(struct power_module *module __unused, power_hint_t hint,
                        void *data __unused) {
-    char profile[PROPERTY_VALUE_MAX];
-
-    property_get(POWER_PROFILE_PROP, profile, "0");
-    if (atoi(profile) == 2)
-        return;
-
     switch (hint) {
 #ifndef HAS_TOUCH_BOOST
     case POWER_HINT_LAUNCH_BOOST:
