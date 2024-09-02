@@ -30,15 +30,23 @@
 #include <cutils/properties.h>
 
 #define DYNAMIC_BOOST_PATH "/sys/devices/platform/dynamic_boost/dynamic_boost"
-static const char *io_is_busy[] = {
-    "/sys/devices/system/cpu/cpu0/cpufreq/ondemand/io_is_busy",
-    "/sys/devices/system/cpu/cpu2/cpufreq/ondemand/io_is_busy"
-};
-
-#define MAX_BUF_SZ 15
+#define NUM_POLICIES 2
+#define MAX_BUF_SZ 64
 #define LAUNCH_BOOST_TIME 5000 /* ms */
 #define INTERACTION_BOOST_TIME 200 /* ms */
 #define POWER_PROFILE_PROP "sys.perf.profile"
+
+static const char *scaling_governor_paths[NUM_POLICIES] = {
+    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
+    "/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
+};
+
+static const char *io_is_busy_paths[NUM_POLICIES] = {
+    "/sys/devices/system/cpu/cpu0/cpufreq/%s/io_is_busy",
+    "/sys/devices/system/cpu/cpu2/cpufreq/%s/io_is_busy"
+};
+
+static char governor[NUM_POLICIES][MAX_BUF_SZ];
 
 typedef enum {
   PRIO_TWO_LITTLES,
@@ -64,6 +72,45 @@ static void sysfs_write(const char *path, const char *s) {
     close(fd);
 }
 
+static int sysfs_read(const char *path, char *s, int num_bytes)
+{
+    int count;
+    int ret = 0;
+    int fd = open(path, O_RDONLY);
+
+    if (fd < 0) {
+        ALOGE("Error opening %s: %s", path, strerror(errno));
+
+        return -1;
+    }
+
+    if ((count = read(fd, s, num_bytes - 1)) < 0) {
+        ALOGE("Error reading %s: %s", path, strerror(errno));
+
+        ret = -1;
+    } else {
+        s[count] = '\0';
+    }
+
+    s[strcspn(s, "\n")] = 0;
+
+    close(fd);
+
+    return ret;
+}
+
+static int get_scaling_governor() {
+    int rc = 0;
+
+    for (int policy = 0; policy < NUM_POLICIES; policy++) {
+        rc = sysfs_read(scaling_governor_paths[policy], governor[policy], MAX_BUF_SZ);
+        if (rc < 0)
+            break;
+    }
+
+    return rc;
+}
+
 static void power_set_dynamic_boost(dynamic_boost_mode_t mode, int durationMs)
 {
     int fd;
@@ -83,6 +130,23 @@ static void power_set_dynamic_boost(dynamic_boost_mode_t mode, int durationMs)
     close(fd);
 }
 
+static void set_io_is_busy(int busy) {
+    int rc;
+    char path[MAX_BUF_SZ];
+
+    rc = get_scaling_governor();
+    if (rc < 0) {
+        ALOGE("%s: Failed to read current governors.", __func__);
+        return;
+    }
+
+    for (int policy = 0; policy < NUM_POLICIES; policy++) {
+        snprintf(path, MAX_BUF_SZ, io_is_busy_paths[policy], governor[policy]);
+        sysfs_write(path, busy ? "1" : "0");
+        ALOGD("%s: Set %s to %d", __func__, path, busy);
+    }
+}
+
 static void power_init(struct power_module *module __unused)
 {
     return;
@@ -95,11 +159,7 @@ static void power_set_interactive(struct power_module *module __unused, int on) 
     property_get(POWER_PROFILE_PROP, profile, "0");
 
     if (atoi(profile) == 1) {
-        size_t i = 0;
-        for (i = 0; i < sizeof(io_is_busy) / sizeof(io_is_busy[0]); i++) {
-            sysfs_write(io_is_busy[i], (on ? "1" : "0"));
-            ALOGD("%s: Set %s to %s", __func__, io_is_busy[i], (on ? "1" : "0"));
-        }
+        set_io_is_busy(on);
     } else if (atoi(profile) == 2 && on) {
         ALOGD("%s: Restore indefinite dynamic boost for performance mode", __func__);
         power_set_dynamic_boost(PRIO_MAX_CORES_MAX_FREQ, -1);
