@@ -227,7 +227,7 @@ static int wpa_driver_mediatek_set_country(void *priv, const char *alpha2_arg)
 		return -1;
 	}
 	os_memset(&iwr, 0, sizeof(iwr));
-	os_strncpy(iwr.ifr_name, drv->first_bss.ifname, IFNAMSIZ);
+        os_strlcpy(iwr.ifr_name, drv->first_bss.ifname, IFNAMSIZ);
 	sprintf(buf,"COUNTRY %s",alpha2_arg);
 	iwr.u.data.pointer = buf;
 	iwr.u.data.length = strlen(buf);
