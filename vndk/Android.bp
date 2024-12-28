@@ -1,0 +1,64 @@
+//
+// SPDX-FileCopyrightText: 2024 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_prebuilt_library_shared {
+    name: "android.hardware.audio.common@4.0-util-v28",
+    vendor: true,
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm: {
+            srcs: ["v28/arm/android.hardware.audio.common@4.0-util-v28.so"],
+        },
+    },
+    compile_multilib: "32",
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "libmedia_helper-v28",
+    vendor: true,
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm: {
+            srcs: ["v28/arm/libmedia_helper-v28.so"],
+        },
+    },
+    compile_multilib: "32",
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "libui-v28",
+    vendor: true,
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm: {
+            srcs: ["v28/arm/libui-v28.so"],
+        },
+    },
+    compile_multilib: "32",
+    check_elf_files: false,
+}
+
+cc_prebuilt_library_shared {
+    name: "libxml2-v28",
+    vendor: true,
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm: {
+            srcs: ["v28/arm/libxml2-v28.so"],
+        },
+    },
+    compile_multilib: "32",
+    check_elf_files: false,
+}
