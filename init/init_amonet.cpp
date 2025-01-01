@@ -55,7 +55,7 @@ const char *resolve_symlink(const char *path) {
 }
 
 void init_amonet_symlinks() {
-    symlink_info_t symlinks[7];
+    symlink_info_t symlinks[10];
 
     init_symlink_info(&symlinks[0], "boot", "boot_amonet", 0);
     init_symlink_info(&symlinks[1], "recovery", "recovery_amonet", 0);
@@ -64,6 +64,9 @@ void init_amonet_symlinks() {
     init_symlink_info(&symlinks[4], "UBOOT", "UBOOT_real", 1);
     init_symlink_info(&symlinks[5], "TEE1", "TEE1_real", 1);
     init_symlink_info(&symlinks[6], "TEE2", "TEE2_real", 1);
+    init_symlink_info(&symlinks[7], "tee1", "tee1_real", 1);
+    init_symlink_info(&symlinks[8], "tee2", "tee2_real", 1);
+    init_symlink_info(&symlinks[9], "lk", "lk_real", 1);
 
     for (size_t i = 0; i < sizeof(symlinks) / sizeof(symlinks[0]); ++i) {
         const symlink_info_t *info = &symlinks[i];
