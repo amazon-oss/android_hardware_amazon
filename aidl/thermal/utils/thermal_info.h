@@ -46,7 +46,8 @@ enum class FormulaOption : uint32_t {
     MAXIMUM,
     MINIMUM,
     USE_ML_MODEL,
-    USE_LINEAR_MODEL
+    USE_LINEAR_MODEL,
+    PREVIOUSLY_PREDICTED
 };
 
 template <typename T>
@@ -120,6 +121,12 @@ enum class SensorFusionType : uint32_t {
     CDEV,
 };
 
+enum class SensorReadStatus : uint32_t {
+    OKAY = 0,
+    UNDER_COLLECTING,
+    ERROR,
+};
+
 std::ostream &operator<<(std::ostream &os, const SensorFusionType &sensor_fusion_type);
 
 struct VirtualSensorInfo {
@@ -141,6 +148,11 @@ struct PredictorInfo {
     bool support_pid_compensation;
     std::vector<float> prediction_weights;
     ThrottlingArray k_p_compensate;
+
+    bool supports_predictions;       // Does this sensor support predictions
+    int prediction_sample_interval;  // Interval between each predicted sample
+    int num_prediction_samples;      // How many samples are predicted for each iteration
+    int prediction_duration;         // Prediction duration for a PREDICTED sensor
 };
 
 struct VirtualPowerRailInfo {
@@ -205,8 +217,8 @@ struct SensorInfo {
     ThrottlingArray hot_hysteresis;
     ThrottlingArray cold_hysteresis;
     std::string temp_path;
-    std::string zone_name;
     std::string severity_reference;
+    std::string zone_name;
     float vr_threshold;
     float multiplier;
     std::chrono::milliseconds polling_delay;
