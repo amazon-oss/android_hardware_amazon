@@ -33,6 +33,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "init_amazon.h"
 #include "init_charger.h"
 
 char* read_cmdline(const char* key) {
@@ -67,7 +68,7 @@ void init_charger_properties() {
     const char* boot_reason = read_cmdline("androidboot.bootreason");
 
     if (boot_reason) {
-        ERROR("Found androidboot.bootreason: %s\n", boot_reason);
+        LOG(ERROR) << "Found androidboot.bootreason: " << boot_reason;
         
         if (strcmp(boot_reason, "usb") == 0) {
             ERROR("boot_reason is 'usb', setting ro.bootmode to 'charger'\n");
@@ -81,7 +82,7 @@ void init_charger_properties() {
         boot_reason = read_cmdline("boot_reason");
         
         if (boot_reason) {
-            ERROR("Found boot_reason: %s\n", boot_reason);
+            LOG(ERROR) << "Found boot_reason: " << boot_reason;
             
             if (atoi(boot_reason) == 1) {
                 ERROR("boot_reason is '1', setting ro.bootmode to 'charger'\n");

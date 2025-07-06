@@ -33,6 +33,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "init_amazon.h"
 #include "init_amonet.h"
 
 void init_symlink_info(symlink_info_t *info, const char *src, const char *dst,
@@ -40,17 +41,16 @@ void init_symlink_info(symlink_info_t *info, const char *src, const char *dst,
     snprintf(info->src_name, sizeof(info->src_name), "%s%s", PATH_PREFIX, src);
     snprintf(info->dst_name, sizeof(info->dst_name), "%s%s", PATH_PREFIX, dst);
     info->redirect_to_null = redirect;
-    ERROR("Initialized symlink info: src=%s, dst=%s, redirect=%d\n",
-          info->src_name, info->dst_name, redirect);
+    LOG(ERROR) << "Initialized symlink info: src=" << info->src_name << ", dst=" << info->dst_name << ", redirect=" << redirect;
 }
 
 const char *resolve_symlink(const char *path) {
     static char resolved_path[PATH_MAX];
     if (realpath(path, resolved_path)) {
-        ERROR("Resolved symlink: %s -> %s\n", path, resolved_path);
+        LOG(ERROR) << "Resolved symlink: " << path << " -> " << resolved_path;
         return resolved_path;
     }
-    ERROR("Failed to resolve symlink for path: %s\n", path);
+    LOG(ERROR) << "Failed to resolve symlink for path: " << path;
     return NULL;
 }
 
@@ -70,21 +70,19 @@ void init_amonet_symlinks() {
 
     for (size_t i = 0; i < sizeof(symlinks) / sizeof(symlinks[0]); ++i) {
         const symlink_info_t *info = &symlinks[i];
-        ERROR("Processing symlink: src=%s, dst=%s, redirect=%d\n",
-              info->src_name, info->dst_name, info->redirect_to_null);
+        LOG(ERROR) << "Processing symlink: src=" << info->src_name << ", dst=" << info->dst_name << ", redirect=" << info->redirect_to_null;
         const char *resolved_symlink = resolve_symlink(info->src_name);
         if (resolved_symlink) {
-            ERROR("Creating symlink from %s to %s\n", info->src_name,
-                  info->dst_name);
+            LOG(ERROR) << "Creating symlink from " << info->src_name << " to " << info->dst_name;
             REMOVE_SYMLINK(info->src_name);
             CREATE_SYMLINK(resolved_symlink, info->dst_name);
 
             if (info->redirect_to_null) {
-                ERROR("Redirecting %s to /dev/null\n", info->src_name);
+                LOG(ERROR) << "Redirecting " << info->src_name << " to /dev/null";
                 CREATE_SYMLINK("/dev/null", info->src_name);
             }
         } else {
-            ERROR("Failed to resolve symlink for %s\n", info->src_name);
+            LOG(ERROR) << "Failed to resolve symlink for " << info->src_name;
         }
     }
 }

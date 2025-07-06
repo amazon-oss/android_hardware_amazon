@@ -7,6 +7,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_C_INCLUDES := system/core/init
 LOCAL_CFLAGS := -Wall -DANDROID_TARGET=\"$(TARGET_BOARD_PLATFORM)\"
 LOCAL_SRC_FILES := init_amazon.cpp init_amonet.cpp
+LOCAL_STATIC_LIBRARIES := libbase libselinux
 
 ifneq ($(TARGET_LIBINIT_DEFINES_FILE),)
   LOCAL_SRC_FILES += ../../../$(TARGET_LIBINIT_DEFINES_FILE)

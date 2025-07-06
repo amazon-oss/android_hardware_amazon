@@ -58,7 +58,7 @@ static int read_bootmode() {
 
     fd = open(BOOTMODE_PATH, O_RDONLY);
     if (fd < 0) {
-        ERROR("Failed to open boot mode file");
+        LOG(ERROR) << "Failed to open boot mode file";
         exit(EXIT_FAILURE);
     }
 
@@ -66,7 +66,7 @@ static int read_bootmode() {
     close(fd);
 
     if (bytes < 0) {
-        ERROR("Failed to read from boot mode file");
+        LOG(ERROR) << "Failed to read from boot mode file";
         return 0; // Assume normal boot mode
     }
 
@@ -77,7 +77,7 @@ static int read_bootmode() {
 static int read_revision() {
     FILE *cpuinfo = fopen(CPUINFO_PATH, "r");
     if (!cpuinfo) {
-        ERROR("Unable to open %s!\n", CPUINFO_PATH);
+        LOG(ERROR) << "Unable to open " << CPUINFO_PATH << "!";
         return -1;
     }
 
@@ -102,7 +102,7 @@ static int read_revision() {
 void vendor_load_properties() {
     int rev = read_revision();
     int bmd = read_bootmode();
-    ERROR("Detected Amazon device REV=%d\n", rev);
+    LOG(ERROR) << "Detected Amazon device REV=" << rev;
     if (bmd != 2) {
         init_amazon_properties(rev);
         // TWRP itself takes care of symlinks

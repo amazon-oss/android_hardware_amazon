@@ -36,6 +36,9 @@
 #include "vendor_init.h"
 
 #include <sys/system_properties.h>
+#include <android-base/logging.h>
+
+using android::init::property_set;
 
 #define UNUSED(a) ((void)(a))
 #define ISMATCH(a, b) (!strncmp(a, b, PROP_VALUE_MAX))
