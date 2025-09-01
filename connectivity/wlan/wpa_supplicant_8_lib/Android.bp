@@ -1,0 +1,35 @@
+// hardware/amazon/connectivity/wlan/wpa_supplicant_8_lib/Android.bp
+//
+// SPDX-FileCopyrightText: 2022-2025 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// Static library for MediaTek Wi-Fi driver command extensions.
+
+cc_library_static {
+    name: "lib_driver_cmd_mt66xx",
+    vendor: true,
+
+    srcs: [
+        "mediatek_driver_cmd_nl80211.c",
+    ],
+
+    header_libs: [
+        "wpa_supplicant_headers",
+    ],
+    export_header_lib_headers: [
+        "wpa_supplicant_headers",
+    ],
+
+    include_dirs: [
+        "external/libnl/include",
+    ],
+
+    cflags: [
+        "-DCONFIG_ANDROID_LOG",
+        "-mabi=aapcs-linux",
+    ],
+
+    sanitize: {
+        cfi: true,
+    },
+}
