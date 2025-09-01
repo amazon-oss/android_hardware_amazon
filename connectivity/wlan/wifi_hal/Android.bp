@@ -1,0 +1,53 @@
+// hardware/amazon/connectivity/wlan/wifi_hal/Android.bp
+// Copyright (C) 2011 The Android Open Source Project
+// SPDX-License-Identifier: Apache-2.0
+//
+// MediaTek Wi-Fi HAL sources live here. We expose them as a static library so
+// frameworks/opt/net/wifi/libwifi_hal or other consumers can link against it
+// using whole_static_libs.
+
+cc_library_static {
+    name: "libwifi-hal-mediatek",
+    srcs: [
+        "wifi_hal.cpp",
+        "rtt.cpp",
+        "common.cpp",
+        "cpp_bindings.cpp",
+        "gscan.cpp",
+        "wifi_offload.cpp",
+    ],
+    cflags: [
+        "-Wno-unused-parameter",
+        "-Wno-int-to-pointer-cast",
+        "-Wno-maybe-uninitialized",
+        "-Wno-parentheses",
+    ],
+    cppflags: [
+        "-Wno-conversion-null",
+    ],
+    include_dirs: [
+        "external/libnl/include",
+        "hardware/interfaces/wifi/legacy_headers/include/hardware_legacy",
+        "external/wpa_supplicant_8/src/drivers",
+    ],
+    shared_libs: [
+        "libutils",
+        "liblog",
+    ],
+    proprietary: true,
+    vendor: true,
+}
+
+// Canonical source list exported for other packages if they want to recompile
+// rather than link.
+filegroup {
+    name: "mtk_wifi_hal_srcs",
+    srcs: [
+        "wifi_hal.cpp",
+        "rtt.cpp",
+        "common.cpp",
+        "cpp_bindings.cpp",
+        "gscan.cpp",
+        "wifi_offload.cpp",
+    ],
+}
