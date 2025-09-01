@@ -1,0 +1,20 @@
+// SPDX-FileCopyrightText: 2022-2025 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+
+cc_prebuilt_library_shared {
+    name: "libkeymaster_messages-v28",
+    srcs: ["libkeymaster_messages-v28.so"],
+    vendor: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libprotobuf-cpp-full-v28",
+    srcs: ["libprotobuf-cpp-full-v28.so"],
+    vendor: true,
+}
+
+cc_prebuilt_library_shared {
+    name: "libprotobuf-cpp-lite-v28",
+    srcs: ["libprotobuf-cpp-lite-v28.so"],
+    vendor: true,
+}
