@@ -62,3 +62,21 @@ cc_prebuilt_library_shared {
     compile_multilib: "32",
     check_elf_files: false,
 }
+
+cc_prebuilt_library_shared {
+    name: "libutils-v30",
+    vendor: true,
+    strip: {
+        none: true,
+    },
+    target: {
+        android_arm: {
+            srcs: ["v30/arm/libutils-v30.so"],
+        },
+    },
+    shared_libs: [
+        "libprocessgroup_shim",
+    ],
+    compile_multilib: "32",
+    check_elf_files: false,
+}
