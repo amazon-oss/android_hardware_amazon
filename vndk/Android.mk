@@ -3,7 +3,7 @@ LOCAL_PATH := prebuilts/vndk
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcompiler_rt-v29
 LOCAL_MULTILIB := both
-LOCAL_SRC_FILES_arm := v29/arm/arch-arm-armv7-a-neon/shared/vndk-sp/libcompiler_rt.so
+LOCAL_SRC_FILES_arm := v29/arm64/arch-arm-armv8-a/shared/vndk-sp/libcompiler_rt.so
 LOCAL_SRC_FILES_arm64 := v29/arm64/arch-arm64-armv8-a/shared/vndk-sp/libcompiler_rt.so
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
@@ -16,7 +16,7 @@ include $(BUILD_PREBUILT)
 include $(CLEAR_VARS)
 LOCAL_MODULE := libui-v28
 LOCAL_MULTILIB := both
-LOCAL_SRC_FILES_arm := v28/arm/arch-arm-armv7-a-neon/shared/vndk-core/libui.so
+LOCAL_SRC_FILES_arm := v28/arm64/arch-arm-armv8-a/shared/vndk-core/libui.so
 LOCAL_SRC_FILES_arm64 := v28/arm64/arch-arm64-armv8-a/shared/vndk-core/libui.so
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
