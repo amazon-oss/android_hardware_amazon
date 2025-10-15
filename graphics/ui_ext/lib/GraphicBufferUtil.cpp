@@ -15,6 +15,7 @@
 
 #include <GraphicBufferUtil.h>
 #include <graphics_mtk_defs.h>
+#include <inttypes.h>
 
 #define ALIGN_CEIL(x,a) (((x) + (a) - 1L) & ~((a) - 1L))
 #define LOCK_FOR_SW (GRALLOC_USAGE_SW_READ_RARELY | GRALLOC_USAGE_SW_WRITE_RARELY | GRALLOC_USAGE_HW_TEXTURE)
@@ -579,9 +580,13 @@ int GraphicBufferUtil::getRealFormat(buffer_handle_t handle, PixelFormat* format
                 *format = HAL_PIXEL_FORMAT_NV12_BLK_FCM;
                 break;
             default:
-                ALOGE("    CANNOT get real format: (format=0x%x, fillFormat=0x%x)",
-                      *format,
-                      sf_info.status & GRALLOC_EXTRA_MASK_CM);
+                {
+                    const uint64_t fill =
+                            static_cast<uint64_t>(sf_info.status) &
+                            static_cast<uint64_t>(GRALLOC_EXTRA_MASK_CM);
+                    ALOGE("    CANNOT get real format: (format=0x%x, fillFormat=0x%" PRIx64 ")",
+                          static_cast<unsigned int>(*format), fill);
+                }
                 return GRALLOC_EXTRA_ERROR;
         }
     }
