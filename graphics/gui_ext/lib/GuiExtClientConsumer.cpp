@@ -82,7 +82,7 @@ status_t GuiExtClientConsumer::acquire(android_native_buffer_t** buffer, uint32_
                 !mSlots[i]->isAcquired) {
                 mSlots[i]->isAcquired = true;
                 *buffer = mSlots[i]->buffer.get();
-                GUIEXT_LOGW("acquire fail=%d but find backup buffer: (poolId=%d, usage=%x, type=%d, idx=%d, buffer=%p) fail=%d",
+                GUIEXT_LOGW("acquire fail=%d but find backup buffer: (poolId=%d, usage=%x, type=%d, idx=%d, buffer=%p)",
                     err, poolId, usage, type, mSlots[i]->idx, *buffer);
                 return NO_ERROR;
             }
