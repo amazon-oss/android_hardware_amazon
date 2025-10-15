@@ -32,7 +32,7 @@ RefBaseDump::RefBaseDump(RefBaseMonitor* pMonitor)
 RefBaseDump::~RefBaseDump() {
 }
 
-status_t RefBaseDump::kickDump(String8& result, const char* prefix) {
+status_t RefBaseDump::kickDump(String8& result, const char*) {
     return mMonitor->dump(result);
 }
 
