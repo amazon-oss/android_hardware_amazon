@@ -831,7 +831,6 @@ status_t GuiExtPoolItem::disconnect(uint32_t usage, uint32_t /*type*/)
 
 void GuiExtPoolItem::dump(String8& result) const
 {
-    int w, h;
     result.appendFormat("    "
                         "this=%p mId=%d, mIsHwcNeeded=%d, mProducerPid=%d, mProducerToken=%p\n",
                         this, mId, mIsHwcNeeded, mProducerPid, mProducerToken.get());
