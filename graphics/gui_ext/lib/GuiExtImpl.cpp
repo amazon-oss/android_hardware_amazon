@@ -16,6 +16,7 @@
 #include <gui/IProducerListener.h>
 #include <gui/ISurfaceComposer.h>
 #include <gui/SurfaceComposerClient.h>
+#include <gui/FrameTimestamps.h> 
 #include <gui/CpuConsumer.h>
 #include <hardware/gralloc.h>
 #include <hardware/hwcomposer_defs.h>
@@ -472,11 +473,6 @@ GuiExtPoolItem::GuiExtPoolItem(const sp<IBinder>& token,
 {
     GUIEXT_LOGV("GuiExtPoolItem ctor, poolId=%d, isHwcNeeded=%d, token=%p", poolId, isHwcNeeded, token.get());
 
-    //String8 name(szUsageName[0]);
-    //name.appendFormat("_%d", poolId);
-    //mGPUUsedBq = createBufferQueue(w, h, mGpuUsedBufNum, name);
-    //createBufferQueue(w, h, mGpuUsedBufNum, name, &mGPUUsedProducer, &mGPUUsedConsumer);
-
 #ifdef CONFIG_FOR_SOURCE_PQ
     if (DispDevice::getInstance().getPqNum() == 1)
     {
@@ -514,7 +510,6 @@ GuiExtPoolItem::GuiExtPoolItem(const sp<IBinder>& token,
 
 GuiExtPoolItem::~GuiExtPoolItem()
 {
-    //mGPUUsedBq.clear();
     mGPUUsedProducer.clear();
     mGPUUsedConsumer.clear();
 #if SUPPORT_MULTIBQ_FOR_HWC
@@ -566,9 +561,6 @@ status_t GuiExtPoolItem::prepareBuffer(uint32_t gralloc_usage)
 {
     status_t err = NO_ERROR;
 
-    //err = prepareBuffer(mGPUUsedProducer, GUI_EXT_USAGE_GPU, 0, gralloc_usage, mGpuUsedBufNum);
-    //GUIEXT_LOGV("    prepare %s buffer done", szUsageName[GUI_EXT_USAGE_GPU]);
-
     if (mIsHwcNeeded) {
 #if SUPPORT_MULTIBQ_FOR_HWC
         for (uint32_t i = 0; i < mHwcUsedBqList.size(); i++) {
@@ -596,7 +588,12 @@ status_t GuiExtPoolItem::prepareBuffer(sp<IGraphicBufferProducer> producer, uint
         int buf = -1;
         sp<Fence> fence;
 
-        producer->dequeueBuffer(&buf, &fence, 0, 0, fmt, usg);
+        uint64_t bufferAge = 0;
+        FrameEventHistoryDelta ts;
+        producer->dequeueBuffer(&buf, &fence,
+                                /*w*/0, /*h*/0,
+                                static_cast<PixelFormat>(fmt),
+                                static_cast<uint64_t>(usg), &bufferAge, &ts);
         uint32_t combine_id = POOL_COMBINED_ID(usage, type, i);
         sp<ConsumerSlot> consumerSlot = mConsumerList.valueFor(combine_id);
         if (consumerSlot == 0) {
@@ -666,7 +663,14 @@ status_t GuiExtPoolItem::acquire(const sp<IBinder>& token, uint32_t usage, uint3
     }
     sp<Fence> fence;
     uint32_t fmt = gAcquiredFormat[usage];
-    status_t ret = producer->dequeueBuffer(buf, &fence, 0, 0, fmt, LOCK_FOR_USAGE);
+
+    uint64_t bufferAge = 0;
+    FrameEventHistoryDelta ts;
+    status_t ret = producer->dequeueBuffer(
+            buf, &fence,
+            /*w*/0, /*h*/0,
+            static_cast<PixelFormat>(fmt),
+            static_cast<uint64_t>(LOCK_FOR_USAGE), &bufferAge, &ts);
     if (ret == WOULD_BLOCK || *buf < 0) {
         GUIEXT_LOGW("    acquire a pool=%d has no free slot", mId);
         return WOULD_BLOCK;
