@@ -251,7 +251,7 @@ status_t GuiExtClientConsumer::configDisplay(uint32_t type, bool enable, uint32_
 
 bool GuiExtClientConsumer::isValidBuffer(android_native_buffer_t* buffer)
 {
-    status_t err;
+    __attribute__((unused)) status_t err;
     Mutex::Autolock _l(mLock);
 
     int idx = getSlotFromBufferLocked(buffer);
