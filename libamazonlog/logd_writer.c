@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 
 #define LOG_TAG "libamazonlog"
