@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+#include <cutils/list.h>
+
 #include <hardware/audio.h>
 
 /**
@@ -210,6 +212,31 @@ struct amazon_audio_hw_device {
 };
 typedef struct amazon_audio_hw_device amazon_audio_hw_device_t;
 
+struct legacy_audio_stream_in {
+    struct audio_stream common;
+    int (*set_gain)(struct legacy_audio_stream_in *stream, float gain);
+    ssize_t (*read)(struct legacy_audio_stream_in *stream, void* buffer,
+                    size_t bytes);
+    uint32_t (*get_input_frames_lost)(struct legacy_audio_stream_in *stream);
+    int (*get_capture_position)(const struct legacy_audio_stream_in *stream, int64_t *frames, int64_t *time);
+};
+
+struct audio_stream_in_ext {
+    /**
+     * This MUST be the first member as audio_stream_in_ext is cast to
+     * and passed back to the framework as an audio_stream_in pointer.
+     */
+    struct audio_stream_in stream_in;
+
+    /**
+     * We keep track of the legacy_audio_stream_in allocated by the HAL
+     * since it will be passed to all HAL methods instead of stream_in.
+     * this is to account for any additional fields that the HAL may
+     * have placed after the audio_stream_in.
+     */
+    struct legacy_audio_stream_in* legacy_stream;
+};
+
 /**
  * These are the supported use cases by the hardware.
  * Each usecase is mapped to a specific PCM device.
@@ -230,3 +257,5 @@ struct audio_patch_record {
     audio_usecase_t usecase;
     struct audio_patch patch;
 };
+
+struct audio_stream_in_ext* create_legacy_audio_stream_in_ext();
