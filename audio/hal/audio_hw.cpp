@@ -21,8 +21,6 @@
 #include <hardware/hardware.h>
 #include <system/audio.h>
 
-#include <cutils/list.h>
-
 #include "audio_amazon.h"
 
 struct amazon_wrapper_audio_device {
@@ -125,16 +123,35 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
                                   audio_devices_t devices, struct audio_config* config,
                                   struct audio_stream_in** stream_in, audio_input_flags_t flags,
                                   const char* address, audio_source_t source) {
+    int rc;
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
+    struct audio_stream_in_ext* stream_in_ext;
+    struct audio_stream_in* legacy_in;
 
-    return ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, config, stream_in,
+    stream_in_ext = create_legacy_audio_stream_in_ext();
+    if (!stream_in_ext)
+        return -ENOMEM;
+
+    rc = ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, config, &legacy_in,
                                                flags, address, source);
+    if (rc < 0) {
+        free(stream_in_ext);
+        return rc;
+    }
+
+    /* legacy_in is now pointing to the HAL's allocated legacy_audio_stream_in */
+    stream_in_ext->legacy_stream = (struct legacy_audio_stream_in*)legacy_in;
+    *stream_in = &stream_in_ext->stream_in;
+    return 0;
 }
 
 static void adev_close_input_stream(struct audio_hw_device* dev, struct audio_stream_in* in) {
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
+    struct audio_stream_in_ext* stream_in_ext = reinterpret_cast<struct audio_stream_in_ext*>(in);
 
-    return ctx->amazon_device->close_input_stream(ctx->amazon_device, in);
+    ctx->amazon_device->close_input_stream(ctx->amazon_device,
+                                           (struct audio_stream_in*)stream_in_ext->legacy_stream);
+    free(stream_in_ext);
 }
 
 static int adev_dump(const struct audio_hw_device* dev, int fd) {
