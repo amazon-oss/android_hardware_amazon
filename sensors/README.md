@@ -1,7 +1,7 @@
-# Sensor HAL for Amazon Echo Devices
-This directory contains the implementation of a basic Sensors HAL for Amazon Echo devices.
+# Sensor HAL for Amazon Devices
+This directory contains the implementation of a basic Sensors HAL for Amazon devices.
 
-Echo devices typically feature a minimal set of onboard sensors, most commonly:
+Amazon devices typically feature a minimal set of onboard sensors, most commonly:
 
 - Proximity Sensor
 - Ambient Light Sensor
