@@ -43,6 +43,12 @@ cc_library_shared {
     ],
 }
 
+cc_library_shared {
+    name: "libmediautils_shim",
+    srcs: ["libmediautils/SchedulingPolicyService.cpp"],
+    shared_libs: ["libmediautils"],
+}
+
 cc_library {
     name: "libmemset_shim",
     vendor: true,
