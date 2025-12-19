@@ -51,6 +51,13 @@ int __metrics_log_print(int prio, const char *tag, int mpriority,
   return 0;
 }
 
+void __metrics_log_print_v2(int bufID, const char *tag, const char *program,
+                            const char *source, int priority, const char *fmt,
+                            ...) {
+  ALOGV("[%s]: bufID=%d, tag=%s, program=%s, source=%s, priority=%d, fmt=%s",
+        __func__, bufID, tag, program, source, priority, fmt);
+}
+
 int __vitals_log_print(const char *tag, const char *program, const char *source,
                        const char *key, double cv, const char *unit,
                        const char *metadata, vitals_type type, int is_counter) {
