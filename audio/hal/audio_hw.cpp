@@ -157,6 +157,9 @@ static void adev_close_input_stream(struct audio_hw_device* dev, struct audio_st
 static int adev_dump(const struct audio_hw_device* dev, int fd) {
     const amazon_wrapper_audio_device* ctx = reinterpret_cast<const amazon_wrapper_audio_device*>(dev);
 
+    if (ctx->amazon_device->dump == NULL)
+        return -ENOSYS;
+
     return ctx->amazon_device->dump(ctx->amazon_device, fd);
 }
 
