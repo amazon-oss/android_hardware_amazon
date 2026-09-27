@@ -15,9 +15,10 @@
 #include <stdlib.h>
 
 template <typename T>
-static void set(const std::string& path, const T& value) {
+static bool set(const std::string& path, const T& value) {
     std::ofstream file(path);
     file << value << std::endl;
+    return file.good();
 }
 
 std::string parse_mac(const std::string& mac);
