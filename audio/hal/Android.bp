@@ -9,6 +9,7 @@ cc_library_shared {
     relative_install_path: "hw",
     vendor: true,
     srcs: [
+        "asp.cpp",
         "audio_hw.cpp",
         "audio_stream.cpp",
     ],

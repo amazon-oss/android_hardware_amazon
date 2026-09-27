@@ -290,6 +290,13 @@ struct audio_stream_in_ext {
     int64_t frames_read;
     int64_t frames_offset;
     bool frames_offset_valid;
+
+    /**
+     * Mic captures run on the voice pipeline, which moves playback to the
+     * VoIP path whenever the capture starts.
+     */
+    bool mic_capture;
+    bool capture_started;
 };
 
 /**

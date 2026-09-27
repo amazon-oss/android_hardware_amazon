@@ -22,6 +22,7 @@
 
 #include <cutils/properties.h>
 
+#include "asp.h"
 #include "audio_amazon.h"
 
 static uint32_t stream_in_ext_get_sample_rate(const struct audio_stream* stream) {
@@ -99,6 +100,7 @@ static int stream_in_ext_standby(struct audio_stream* stream) {
         return -ENOSYS;
 
     stream_in_ext->frames_offset_valid = false;
+    stream_in_ext->capture_started = false;
     return common->standby(common);
 }
 
@@ -181,6 +183,11 @@ static ssize_t stream_in_ext_read(struct audio_stream_in* stream, void* buffer,
         return -ENOSYS;
 
     ssize_t ret = legacy_stream->read(legacy_stream, buffer, bytes);
+    if (stream_in_ext->mic_capture && !stream_in_ext->capture_started) {
+        /* Keep the VoIP playback path for calls only. */
+        asp_send_command(ASP_CMD_SET_VOIP_MODE, 0);
+        stream_in_ext->capture_started = true;
+    }
     if (ret > 0)
         stream_in_ext->frames_read += ret / audio_stream_in_frame_size(stream);
 

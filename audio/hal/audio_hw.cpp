@@ -22,6 +22,7 @@
 #include <hardware/hardware.h>
 #include <system/audio.h>
 
+#include "asp.h"
 #include "audio_amazon.h"
 
 struct amazon_wrapper_audio_device {
@@ -88,6 +89,14 @@ static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_s
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
 
     return ctx->amazon_device->close_output_stream(ctx->amazon_device, stream);
+}
+
+/*
+ * The HAL only runs Amazon's capture processing for voice sources, there is
+ * no pipeline for plain mic captures. Use the voice one, it has AGC and NR.
+ */
+static audio_source_t remap_input_source(audio_source_t source) {
+    return source == AUDIO_SOURCE_MIC ? AUDIO_SOURCE_VOICE_COMMUNICATION : source;
 }
 
 static int adev_set_parameters(struct audio_hw_device* dev, const char* kvpairs) {
@@ -172,6 +181,7 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
     struct audio_stream_in_ext* stream_in_ext;
     struct audio_stream_in* legacy_in;
     struct amazon_audio_config amazon_config;
+    audio_source_t amazon_source = remap_input_source(source);
 
     stream_in_ext = create_legacy_audio_stream_in_ext();
     if (!stream_in_ext)
@@ -179,12 +189,20 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
 
     to_amazon_config(config, &amazon_config);
     rc = ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, &amazon_config,
-                                               &legacy_in, flags, address, source);
+                                               &legacy_in, flags, address, amazon_source);
     from_amazon_config(&amazon_config, config);
     if (rc < 0) {
         free(stream_in_ext);
         return rc;
     }
+
+    /*
+     * The VoIP path scales playback by its own volume index, which FireOS
+     * sets and is 0 (muted) here. AudioFlinger already applies the volume.
+     */
+    if (amazon_source == AUDIO_SOURCE_VOICE_COMMUNICATION)
+        asp_send_command(ASP_CMD_SET_VOLUME, ASP_VOLUME_MAX);
+    stream_in_ext->mic_capture = source == AUDIO_SOURCE_MIC;
 
     /* legacy_in is now pointing to the HAL's allocated legacy_audio_stream_in */
     stream_in_ext->legacy_stream = (struct legacy_audio_stream_in*)legacy_in;
@@ -299,6 +317,12 @@ static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num
         patch_record->patch.num_sinks = num_sinks;
         for (int i = 0; i < num_sources; i++) patch_record->patch.sources[i] = sources[i];
         for (int i = 0; i < num_sinks; i++) patch_record->patch.sinks[i] = sinks[i];
+
+        for (int i = 0; i < num_sinks; i++) {
+            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_MIX)
+                patch_record->patch.sinks[i].ext.mix.usecase.source =
+                        remap_input_source(patch_record->patch.sinks[i].ext.mix.usecase.source);
+        }
 
         struct amazon_audio_port_config amazon_sources[AUDIO_PATCH_PORTS_MAX];
         struct amazon_audio_port_config amazon_sinks[AUDIO_PATCH_PORTS_MAX];
