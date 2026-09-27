@@ -16,6 +16,7 @@ cc_library_shared {
     name: "libcutils_shim",
     srcs: ["libcutils/atomic.cpp"],
     shared_libs: ["libcutils"],
+    vendor: true,
 }
 
 cc_library_shared {
