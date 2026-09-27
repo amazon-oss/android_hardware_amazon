@@ -11,8 +11,8 @@
 
 #include <android-base/logging.h>
 
-#include <fstream>
-#include <iostream>
+#include <cerrno>
+#include <cstring>
 #include <vector>
 #include <unistd.h>
 
@@ -26,17 +26,48 @@ const symlink_info_t symlinks[] = {
     {"tee2", "tee2_real", true},
 };
 
+static bool replace_symlink(const std::string& target, const std::string& link) {
+    if (unlink(link.c_str()) && errno != ENOENT) {
+        PLOG(ERROR) << "Unable to remove " << link;
+        return false;
+    }
+
+    if (symlink(target.c_str(), link.c_str())) {
+        PLOG(ERROR) << "Unable to link " << link << " to " << target;
+        return false;
+    }
+
+    return true;
+}
+
 void load_amazon_amonet() {
-    for (const auto &info : symlinks) {
-        const char *resolved_symlink = resolve_symlink(info.src_name);
-        LOG(INFO) << "Creating symlink from " << info.src_name
-                  << " to " << info.dst_name;
+    // The links are swapped in place, so only do it once per boot
+    if (!access(symlinks[0].dst_name.c_str(), F_OK)) {
+        LOG(INFO) << "Symlinks are already set up";
+        return;
+    }
 
-        REMOVE_SYMLINK(info.src_name.c_str());
-        CREATE_SYMLINK(resolved_symlink, info.dst_name.c_str());
-
-        if (info.redirect_to_null) {
-            CREATE_SYMLINK("/dev/null", info.src_name.c_str());
+    // Resolve everything first, so a missing partition leaves the layout untouched
+    std::vector<std::string> targets;
+    for (const auto& info : symlinks) {
+        std::string target = resolve_symlink(info.src_name);
+        if (target.empty()) {
+            LOG(ERROR) << "Unable to resolve " << info.src_name << ", not an amonet layout";
+            return;
         }
+        targets.push_back(target);
+    }
+
+    for (size_t i = 0; i < targets.size(); i++) {
+        const auto& info = symlinks[i];
+        LOG(INFO) << "Creating symlink from " << info.src_name << " to " << info.dst_name;
+
+        if (unlink(info.src_name.c_str()) && errno != ENOENT)
+            PLOG(ERROR) << "Unable to remove " << info.src_name;
+
+        replace_symlink(targets[i], info.dst_name);
+
+        if (info.redirect_to_null)
+            replace_symlink("/dev/null", info.src_name);
     }
 }

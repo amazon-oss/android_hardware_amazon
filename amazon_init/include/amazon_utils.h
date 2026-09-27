@@ -14,16 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define REMOVE_SYMLINK(path) \
-    do { \
-        unlink(path); \
-    } while (0)
-
-#define CREATE_SYMLINK(target, link) \
-    do { \
-        symlink(target, link); \
-    } while (0)
-
 template <typename T>
 static void set(const std::string& path, const T& value) {
     std::ofstream file(path);
@@ -31,4 +21,4 @@ static void set(const std::string& path, const T& value) {
 }
 
 std::string parse_mac(const std::string& mac);
-const char* resolve_symlink(const std::string& path);
+std::string resolve_symlink(const std::string& path);
