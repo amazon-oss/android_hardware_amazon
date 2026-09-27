@@ -49,6 +49,15 @@ static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_s
     return ctx->amazon_device->close_output_stream(ctx->amazon_device, stream);
 }
 
+/*
+ * The HAL only runs Amazon's capture processing for voice sources, there is
+ * no pipeline for plain mic captures. Use the voice communication one, the
+ * voice recognition one has no gain or noise reduction stage.
+ */
+static audio_source_t remap_input_source(audio_source_t source) {
+    return source == AUDIO_SOURCE_MIC ? AUDIO_SOURCE_VOICE_COMMUNICATION : source;
+}
+
 static int adev_set_parameters(struct audio_hw_device* dev, const char* kvpairs) {
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
 
@@ -134,7 +143,7 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
         return -ENOMEM;
 
     rc = ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, config, &legacy_in,
-                                               flags, address, source);
+                                               flags, address, remap_input_source(source));
     if (rc < 0) {
         free(stream_in_ext);
         return rc;
@@ -253,6 +262,12 @@ static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num
         patch_record->patch.num_sinks = num_sinks;
         for (int i = 0; i < num_sources; i++) patch_record->patch.sources[i] = sources[i];
         for (int i = 0; i < num_sinks; i++) patch_record->patch.sinks[i] = sinks[i];
+
+        for (int i = 0; i < num_sinks; i++) {
+            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_MIX)
+                patch_record->patch.sinks[i].ext.mix.usecase.source =
+                        remap_input_source(patch_record->patch.sinks[i].ext.mix.usecase.source);
+        }
 
         struct amazon_audio_port_config amazon_sources[AUDIO_PATCH_PORTS_MAX];
         struct amazon_audio_port_config amazon_sinks[AUDIO_PATCH_PORTS_MAX];
