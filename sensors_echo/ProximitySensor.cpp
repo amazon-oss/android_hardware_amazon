@@ -55,7 +55,7 @@ void ProximitySensor::setInitialState() {
     }
 }
 
-void ProximitySensor::processEvent(sensors_event_t* data, int& count, int& numEventReceived,
+void ProximitySensor::processEvent(sensors_event_t*& data, int& count, int& numEventReceived,
                                    const input_event* event) {
     int type = event->type;
 

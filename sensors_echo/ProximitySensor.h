@@ -22,7 +22,7 @@
 class ProximitySensor : public AlspsSensorBase {
   protected:
     virtual void setInitialState();
-    virtual void processEvent(sensors_event_t* data, int& count, int& numEventReceived,
+    virtual void processEvent(sensors_event_t*& data, int& count, int& numEventReceived,
                               const input_event* event);
 
   public:
