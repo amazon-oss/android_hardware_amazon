@@ -13,6 +13,8 @@
 #include <cstdint>
 #include <cstdio>
 
+#include <unistd.h>
+
 #include <android-base/file.h>
 #include <android-base/logging.h>
 #include <android-base/properties.h>
@@ -20,6 +22,7 @@
 using android::base::GetProperty;
 using android::base::SetProperty;
 using android::base::ReadFileToString;
+using android::base::WriteStringToFile;
 
 static bool is_valid_mac(const std::string& mac) {
     if (mac.size() < 12) return false;
@@ -33,9 +36,9 @@ static bool is_valid_mac(const std::string& mac) {
     return nonzero;
 }
 
-static std::string mac_from_serial() {
+static std::string mac_from_serial(const std::string& salt) {
     uint64_t hash = 14695981039346656037ULL;
-    for (char c : GetProperty("ro.serialno", "")) {
+    for (char c : GetProperty("ro.serialno", "") + salt) {
         hash ^= static_cast<unsigned char>(c);
         hash *= 1099511628211ULL;
     }
@@ -52,19 +55,40 @@ static std::string mac_from_serial() {
     return mac;
 }
 
-void load_amazon_idme() {
+static std::string read_idme_mac(const char* path, const std::string& salt) {
     std::string mac;
 
-    if (!ReadFileToString(kIdmeBtMacPath, &mac) || !is_valid_mac(mac)) {
-        LOG(WARNING) << "No valid Bluetooth MAC in " << kIdmeBtMacPath
-                     << ", deriving one from the serial number";
-        mac = mac_from_serial();
+    if (!ReadFileToString(path, &mac) || !is_valid_mac(mac)) {
+        LOG(WARNING) << "No valid MAC in " << path << ", deriving one from the serial number";
+        mac = mac_from_serial(salt);
     }
 
-    if (!set(kAndroidBtMacPath, parse_mac(mac))) {
+    return mac;
+}
+
+static void load_bt_mac() {
+    if (!set(kAndroidBtMacPath, parse_mac(read_idme_mac(kIdmeBtMacPath, "")))) {
         LOG(ERROR) << "Unable to write " << kAndroidBtMacPath;
         return;
     }
 
     SetProperty(kPropMacsAreReady, "1");
+}
+
+static void load_wifi_mac() {
+    if (access(kBcmdhdModulePath, F_OK))
+        return;
+
+    // The driver applies it the next time Wi-Fi is brought up
+    for (int i = 0; i < 50 && access(kBcmdhdMacParamPath, F_OK); i++)
+        usleep(100 * 1000);
+
+    if (!WriteStringToFile(parse_mac(read_idme_mac(kIdmeWifiMacPath, "wlan0")),
+                           kBcmdhdMacParamPath))
+        PLOG(ERROR) << "Unable to write " << kBcmdhdMacParamPath;
+}
+
+void load_amazon_idme() {
+    load_bt_mac();
+    load_wifi_mac();
 }
