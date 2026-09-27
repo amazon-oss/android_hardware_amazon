@@ -16,6 +16,7 @@
 #include <hardware/hardware.h>
 #include <system/audio.h>
 
+#include "asp.h"
 #include "audio_amazon.h"
 
 struct v28_wrapper_audio_device {
@@ -133,6 +134,9 @@ static int adev_open_input_stream(struct v28_audio_hw_device* dev, audio_io_hand
         adev->close_input_stream(adev, amazon_stream);
         return -ENOMEM;
     }
+
+    if (source == AUDIO_SOURCE_VOICE_COMMUNICATION)
+        asp_send_command(ASP_CMD_SET_VOLUME, ASP_VOLUME_MAX);
 
     *stream_in = &in->stream;
     return 0;

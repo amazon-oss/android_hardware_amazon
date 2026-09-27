@@ -9,6 +9,7 @@ cc_library_shared {
     vendor: true,
     compile_multilib: "32",
     srcs: [
+        "asp.cpp",
         "audio_hw.cpp",
         "audio_stream.cpp",
     ],
