@@ -29,6 +29,31 @@ struct amazon_audio_port_config {
 };
 
 /**
+ * audio_offload_info_t and audio_config as our audio HALs know them, from
+ * before the offload info grew past is_streaming.
+ */
+struct amazon_audio_offload_info {
+    uint16_t version;
+    uint16_t size;
+    uint32_t sample_rate;
+    audio_channel_mask_t channel_mask;
+    audio_format_t format;
+    audio_stream_type_t stream_type;
+    uint32_t bit_rate;
+    int64_t duration_us;
+    bool has_video;
+    bool is_streaming;
+};
+
+struct amazon_audio_config {
+    uint32_t sample_rate;
+    audio_channel_mask_t channel_mask;
+    audio_format_t format;
+    struct amazon_audio_offload_info offload_info;
+    size_t frame_count;
+};
+
+/**
  * This is basically just a copy of the audio_hw_device_t struct from
  * hardware/libhardware/include/hardware/audio.h, but without
  * get_microphones to match the audio_hw_device_t struct in
@@ -106,7 +131,7 @@ struct amazon_audio_hw_device {
      * See also get_buffer_size which is for a particular stream.
      */
     size_t (*get_input_buffer_size)(const struct amazon_audio_hw_device* dev,
-                                    const struct audio_config* config);
+                                    const struct amazon_audio_config* config);
 
     /** This method creates and opens the audio hardware output stream.
      * The "address" parameter qualifies the "devices" audio device type if needed.
@@ -118,15 +143,15 @@ struct amazon_audio_hw_device {
 
     int (*open_output_stream)(struct amazon_audio_hw_device* dev, audio_io_handle_t handle,
                               audio_devices_t devices, audio_output_flags_t flags,
-                              struct audio_config* config, struct audio_stream_out** stream_out,
-                              const char* address);
+                              struct amazon_audio_config* config,
+                              struct audio_stream_out** stream_out, const char* address);
 
     void (*close_output_stream)(struct amazon_audio_hw_device* dev,
                                 struct audio_stream_out* stream_out);
 
     /** This method creates and opens the audio hardware input stream */
     int (*open_input_stream)(struct amazon_audio_hw_device* dev, audio_io_handle_t handle,
-                             audio_devices_t devices, struct audio_config* config,
+                             audio_devices_t devices, struct amazon_audio_config* config,
                              struct audio_stream_in** stream_in, audio_input_flags_t flags,
                              const char* address, audio_source_t source);
 

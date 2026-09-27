@@ -33,14 +33,55 @@ struct amazon_wrapper_audio_device {
     int hw_module;
 };
 
+static_assert(offsetof(struct amazon_audio_offload_info, is_streaming) ==
+                      offsetof(audio_offload_info_t, is_streaming),
+              "amazon_audio_offload_info must match audio_offload_info_t up to is_streaming");
+
+static void to_amazon_config(const struct audio_config* config,
+                             struct amazon_audio_config* amazon_config) {
+    const audio_offload_info_t* info = &config->offload_info;
+    struct amazon_audio_offload_info* amazon_info = &amazon_config->offload_info;
+
+    memset(amazon_config, 0, sizeof(*amazon_config));
+    amazon_config->sample_rate = config->sample_rate;
+    amazon_config->channel_mask = config->channel_mask;
+    amazon_config->format = config->format;
+    amazon_config->frame_count = config->frame_count;
+
+    amazon_info->version = AUDIO_MAKE_OFFLOAD_INFO_VERSION(0, 1);
+    amazon_info->size = sizeof(*amazon_info);
+    amazon_info->sample_rate = info->sample_rate;
+    amazon_info->channel_mask = info->channel_mask;
+    amazon_info->format = info->format;
+    amazon_info->stream_type = info->stream_type;
+    amazon_info->bit_rate = info->bit_rate;
+    amazon_info->duration_us = info->duration_us;
+    amazon_info->has_video = info->has_video;
+    amazon_info->is_streaming = info->is_streaming;
+}
+
+static void from_amazon_config(const struct amazon_audio_config* amazon_config,
+                               struct audio_config* config) {
+    config->sample_rate = amazon_config->sample_rate;
+    config->channel_mask = amazon_config->channel_mask;
+    config->format = amazon_config->format;
+    config->frame_count = amazon_config->frame_count;
+}
+
 static int adev_open_output_stream(struct audio_hw_device* dev, audio_io_handle_t handle,
                                    audio_devices_t devices, audio_output_flags_t flags,
                                    struct audio_config* config,
                                    struct audio_stream_out** stream_out, const char* address) {
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
+    struct amazon_audio_config amazon_config;
+    int rc;
 
-    return ctx->amazon_device->open_output_stream(ctx->amazon_device, handle, devices, flags, config,
-                                                stream_out, address);
+    to_amazon_config(config, &amazon_config);
+    rc = ctx->amazon_device->open_output_stream(ctx->amazon_device, handle, devices, flags,
+                                                &amazon_config, stream_out, address);
+    from_amazon_config(&amazon_config, config);
+
+    return rc;
 }
 
 static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_stream_out* stream) {
@@ -125,8 +166,10 @@ static int adev_get_mic_mute(const struct audio_hw_device* dev, bool* state) {
 static size_t adev_get_input_buffer_size(const struct audio_hw_device* dev,
                                          const struct audio_config* config) {
     const amazon_wrapper_audio_device* ctx = reinterpret_cast<const amazon_wrapper_audio_device*>(dev);
+    struct amazon_audio_config amazon_config;
 
-    return ctx->amazon_device->get_input_buffer_size(ctx->amazon_device, config);
+    to_amazon_config(config, &amazon_config);
+    return ctx->amazon_device->get_input_buffer_size(ctx->amazon_device, &amazon_config);
 }
 
 static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t handle,
@@ -137,13 +180,16 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
     struct audio_stream_in_ext* stream_in_ext;
     struct audio_stream_in* legacy_in;
+    struct amazon_audio_config amazon_config;
 
     stream_in_ext = create_legacy_audio_stream_in_ext();
     if (!stream_in_ext)
         return -ENOMEM;
 
-    rc = ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, config, &legacy_in,
-                                               flags, address, remap_input_source(source));
+    to_amazon_config(config, &amazon_config);
+    rc = ctx->amazon_device->open_input_stream(ctx->amazon_device, handle, devices, &amazon_config,
+                                               &legacy_in, flags, address, remap_input_source(source));
+    from_amazon_config(&amazon_config, config);
     if (rc < 0) {
         free(stream_in_ext);
         return rc;
