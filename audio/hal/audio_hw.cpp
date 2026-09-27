@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <malloc.h>
 #include <pthread.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -196,6 +197,16 @@ const char* strAudioPatchRole[] = {"AUDIO_PORT_ROLE_NONE", "AUDIO_PORT_ROLE_SOUR
 const char* strAudioPatchType[] = {"AUDIO_PORT_TYPE_NONE", "AUDIO_PORT_TYPE_DEVICE",
                                    "AUDIO_PORT_TYPE_MIX", "AUDIO_PORT_TYPE_SESSION"};
 
+static_assert(offsetof(struct amazon_audio_port_config, ext) ==
+                      offsetof(struct audio_port_config, flags),
+              "amazon_audio_port_config must match audio_port_config up to ext");
+
+static void to_amazon_port_config(const struct audio_port_config* config,
+                                  struct amazon_audio_port_config* amazon_config) {
+    memcpy(amazon_config, config, offsetof(struct amazon_audio_port_config, ext));
+    memcpy(&amazon_config->ext, &config->ext, sizeof(amazon_config->ext));
+}
+
 static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num_sources,
                                    const struct audio_port_config* sources, unsigned int num_sinks,
                                    const struct audio_port_config* sinks,
@@ -243,36 +254,16 @@ static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num
         for (int i = 0; i < num_sources; i++) patch_record->patch.sources[i] = sources[i];
         for (int i = 0; i < num_sinks; i++) patch_record->patch.sinks[i] = sinks[i];
 
-        for (int i = 0; i < num_sources; i++) {
-            if (patch_record->patch.sources[i].type == AUDIO_PORT_TYPE_MIX) {
-                patch_record->patch.sources[i].ext.mix.hw_module =
-                        patch_record->patch.sources[i].ext.mix.handle;
-                ALOGD("%s - change source hw_module with handle(%d) ", __FUNCTION__,
-                      patch_record->patch.sources[i].ext.mix.hw_module);
-            }
-            if (patch_record->patch.sources[i].type == AUDIO_PORT_TYPE_DEVICE) {
-                patch_record->patch.sources[i].ext.device.hw_module =
-                        patch_record->patch.sources[i].ext.device.type;
-            }
-        }
+        struct amazon_audio_port_config amazon_sources[AUDIO_PATCH_PORTS_MAX];
+        struct amazon_audio_port_config amazon_sinks[AUDIO_PATCH_PORTS_MAX];
+        for (int i = 0; i < num_sources; i++)
+            to_amazon_port_config(&patch_record->patch.sources[i], &amazon_sources[i]);
+        for (int i = 0; i < num_sinks; i++)
+            to_amazon_port_config(&patch_record->patch.sinks[i], &amazon_sinks[i]);
 
-        for (int i = 0; i < num_sinks; i++) {
-            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_MIX) {
-                patch_record->patch.sinks[i].ext.mix.hw_module =
-                        patch_record->patch.sinks[i].ext.mix.handle;
-                ALOGD("%s - change sink hw_module with handle(%d) ", __FUNCTION__,
-                      patch_record->patch.sinks[i].ext.mix.hw_module);
-            }
-
-            if (patch_record->patch.sinks[i].type == AUDIO_PORT_TYPE_DEVICE) {
-                patch_record->patch.sinks[i].ext.device.hw_module =
-                        patch_record->patch.sinks[i].ext.device.type;
-            }
-        }
-
-        status = ctx->amazon_device->create_audio_patch(
-                ctx->amazon_device, patch_record->patch.num_sources, patch_record->patch.sources,
-                patch_record->patch.num_sinks, patch_record->patch.sinks, &handle_amazon);
+        status = ctx->amazon_device->create_audio_patch(ctx->amazon_device, num_sources,
+                                                        amazon_sources, num_sinks, amazon_sinks,
+                                                        &handle_amazon);
 
         if (status == 0) {
             ALOGD("%s - call create_audio_patch sucess", __FUNCTION__);

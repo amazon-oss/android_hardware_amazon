@@ -9,6 +9,26 @@
 #include <hardware/audio.h>
 
 /**
+ * audio_port_config as our audio HALs know it, from before the flags field
+ * was added in front of ext.
+ */
+struct amazon_audio_port_config {
+    audio_port_handle_t id;
+    audio_port_role_t role;
+    audio_port_type_t type;
+    unsigned int config_mask;
+    unsigned int sample_rate;
+    audio_channel_mask_t channel_mask;
+    audio_format_t format;
+    struct audio_gain_config gain;
+    union {
+        struct audio_port_config_device_ext device;
+        struct audio_port_config_mix_ext mix;
+        struct audio_port_config_session_ext session;
+    } ext;
+};
+
+/**
  * This is basically just a copy of the audio_hw_device_t struct from
  * hardware/libhardware/include/hardware/audio.h, but without
  * get_microphones to match the audio_hw_device_t struct in
@@ -138,8 +158,10 @@ struct amazon_audio_hw_device {
      * The handle is allocated by the HAL and should be unique for this
      * audio HAL module. */
     int (*create_audio_patch)(struct amazon_audio_hw_device* dev, unsigned int num_sources,
-                              const struct audio_port_config* sources, unsigned int num_sinks,
-                              const struct audio_port_config* sinks, audio_patch_handle_t* handle);
+                              const struct amazon_audio_port_config* sources,
+                              unsigned int num_sinks,
+                              const struct amazon_audio_port_config* sinks,
+                              audio_patch_handle_t* handle);
 
     /* Release an audio patch */
     int (*release_audio_patch)(struct amazon_audio_hw_device* dev, audio_patch_handle_t handle);
@@ -154,7 +176,7 @@ struct amazon_audio_hw_device {
 
     /* Set audio port configuration */
     int (*set_audio_port_config)(struct amazon_audio_hw_device* dev,
-                                 const struct audio_port_config* config);
+                                 const struct amazon_audio_port_config* config);
 
     /**
      * Applies an audio effect to an audio device.
