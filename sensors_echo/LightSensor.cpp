@@ -57,7 +57,7 @@ void LightSensor::setInitialState() {
     }
 }
 
-void LightSensor::processEvent(sensors_event_t* data, int& count, int& numEventReceived,
+void LightSensor::processEvent(sensors_event_t*& data, int& count, int& numEventReceived,
                                const input_event* event) {
     int type = event->type;
 

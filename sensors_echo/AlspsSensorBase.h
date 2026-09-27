@@ -34,7 +34,7 @@ class AlspsSensorBase : public SensorBase {
     bool mHasPendingEvent;
 
     virtual void setInitialState() = 0;
-    virtual void processEvent(sensors_event_t* data, int& count, int& numEventReceived,
+    virtual void processEvent(sensors_event_t*& data, int& count, int& numEventReceived,
                               const input_event* event) = 0;
 
   private:
