@@ -56,7 +56,8 @@ ndk::ScopedAStatus Power::setMode(Mode type, bool enabled) {
             if (enabled)
                 setDynamicBoost(DynamicBoostMode::PRIO_MAX_CORES_MAX_FREQ, 5000);
             else
-                setDynamicBoost(DynamicBoostMode::PRIO_RESET, 0);
+                // The kernel ignores requests without a duration
+                setDynamicBoost(DynamicBoostMode::PRIO_RESET, 1);
             status = ndk::ScopedAStatus::ok();
             break;
         default:
