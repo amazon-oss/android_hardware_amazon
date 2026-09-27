@@ -76,6 +76,7 @@ ndk::ScopedAStatus Power::isModeSupported(Mode type, bool* _aidl_return) {
             *_aidl_return = true;
             break;
         default:
+            *_aidl_return = false;
             break;
     }
     return ndk::ScopedAStatus::ok();
@@ -107,6 +108,7 @@ ndk::ScopedAStatus Power::isBoostSupported(Boost type, bool* _aidl_return) {
             *_aidl_return = true;
             break;
         default:
+            *_aidl_return = false;
             break;
     }
     return ndk::ScopedAStatus::ok();
