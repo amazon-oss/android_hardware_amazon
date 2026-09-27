@@ -235,6 +235,14 @@ struct audio_stream_in_ext {
      * have placed after the audio_stream_in.
      */
     struct legacy_audio_stream_in* legacy_stream;
+
+    /**
+     * The HAL keeps counting captured frames across streams and never resets,
+     * so report capture positions relative to what this stream has read.
+     */
+    int64_t frames_read;
+    int64_t frames_offset;
+    bool frames_offset_valid;
 };
 
 /**

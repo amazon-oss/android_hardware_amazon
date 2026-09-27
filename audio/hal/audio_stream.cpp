@@ -98,6 +98,7 @@ static int stream_in_ext_standby(struct audio_stream* stream) {
     if (common->standby == NULL)
         return -ENOSYS;
 
+    stream_in_ext->frames_offset_valid = false;
     return common->standby(common);
 }
 
@@ -179,7 +180,11 @@ static ssize_t stream_in_ext_read(struct audio_stream_in* stream, void* buffer,
     if (legacy_stream->read == NULL)
         return -ENOSYS;
 
-    return legacy_stream->read(legacy_stream, buffer, bytes);
+    ssize_t ret = legacy_stream->read(legacy_stream, buffer, bytes);
+    if (ret > 0)
+        stream_in_ext->frames_read += ret / audio_stream_in_frame_size(stream);
+
+    return ret;
 }
 
 static uint32_t stream_in_ext_get_input_frames_lost(struct audio_stream_in* stream) {
@@ -202,7 +207,17 @@ static int stream_in_ext_get_capture_position(const struct audio_stream_in* stre
     if (legacy_stream->get_capture_position == NULL)
         return -ENOSYS;
 
-    return legacy_stream->get_capture_position(legacy_stream, frames, time);
+    int ret = legacy_stream->get_capture_position(legacy_stream, frames, time);
+    if (ret)
+        return ret;
+
+    if (!stream_in_ext->frames_offset_valid) {
+        stream_in_ext->frames_offset = *frames - stream_in_ext->frames_read;
+        stream_in_ext->frames_offset_valid = true;
+    }
+
+    *frames -= stream_in_ext->frames_offset;
+    return 0;
 }
 
 /* allocate and setup an audio_stream_in_ext */
