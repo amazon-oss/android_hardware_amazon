@@ -1,0 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audio@5.0;
+
+import android.hardware.audio@5.0::IStreamOutCallback;
+
+interface IStreamOutCallback extends android.hardware.audio@5.0::IStreamOutCallback {
+};
