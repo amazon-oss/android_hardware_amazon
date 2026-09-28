@@ -1,0 +1,40 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.hdcp@1.0;
+
+enum Status : uint32_t {
+    OK = 0,
+    NOT_ENOUGH_DATA = 1,
+    UNKNOWN_ERROR = 2,
+};
+
+enum BufferType : uint32_t {
+    SHARED_MEMORY = 0,
+    NATIVE_HANDLE = 1,
+};
+
+struct SharedBuffer {
+    uint32_t bufferId;
+    uint64_t offset;
+    uint64_t size;
+};
+
+struct DestinationBuffer {
+    BufferType type;
+    SharedBuffer nonsecureMemory;
+    handle secureMemory;
+};
+
+struct FrameMetaData {
+    bool isAudio;
+    SharedBuffer source;
+    uint32_t dataSize;
+    vec<uint8_t> drmInfo;
+    uint32_t drmInfoSize;
+    int64_t timeUs;
+    uint32_t streamCTR;
+    uint64_t outInputCTR;
+};

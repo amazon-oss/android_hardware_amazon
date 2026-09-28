@@ -1,0 +1,24 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.hdcp@1.0;
+
+import IAmazonHdcpObserver;
+import ICommunicationHandler;
+
+interface IAmazonHdcp {
+    setObserver(IAmazonHdcpObserver observer) generates (Status status);
+    initAsync(string host, uint32_t port) generates (Status status);
+    shutdownAsync() generates (Status status);
+    getCaps() generates (uint32_t caps);
+    encrypt(FrameMetaData inData, DestinationBuffer destBuffer)
+        generates (Status status, uint64_t outInputCTR);
+    decrypt(FrameMetaData inData, DestinationBuffer destBuffer)
+        generates (Status status, int64_t timeUs, uint32_t dataSize);
+    setSharedBufferBase(memory base, uint32_t bufferId);
+    isKeyAvailable() generates (bool available);
+    setCommunicationHandler(ICommunicationHandler handler) generates (Status status);
+    sendData(vec<uint8_t> data, int32_t dataSize, int32_t type);
+};

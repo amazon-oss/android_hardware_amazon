@@ -1,0 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.hdcp@1.0;
+
+interface ICommunicationHandler {
+    onDataToSend(vec<uint8_t> data, int32_t dataSize) generates (int32_t result);
+    onDataReceived(int32_t dataSize, int32_t type) generates (int32_t result);
+};
