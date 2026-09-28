@@ -1,0 +1,26 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_binary {
+    name: "fireos.hardware.audio.service",
+    init_rc: ["fireos.hardware.audio.service.rc"],
+    relative_install_path: "hw",
+    vendor: true,
+    compile_multilib: "prefer32",
+    srcs: ["service.cpp"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wextra",
+    ],
+    shared_libs: [
+        "libbinder",
+        "libbinder_ndk",
+        "libcutils",
+        "libhidlbase",
+        "liblog",
+        "libutils",
+    ],
+}
