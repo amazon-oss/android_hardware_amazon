@@ -1,0 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.localtime@1.0;
+
+interface ILocalTime {
+    getLocalTime() generates (int64_t localTime);
+    getLocalFreq() generates (uint64_t localFreq);
+    setLocalSlew(int16_t rate) generates (int32_t result);
+    getDebugLog(int64_t localTimesyncEventId, int64_t localTime, int64_t maxRecords)
+        generates (int32_t result);
+};
