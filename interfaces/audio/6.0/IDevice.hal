@@ -1,0 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audio@6.0;
+
+import android.hardware.audio@6.0::IDevice;
+
+interface IDevice extends android.hardware.audio@6.0::IDevice {
+};

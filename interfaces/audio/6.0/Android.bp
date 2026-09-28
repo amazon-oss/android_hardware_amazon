@@ -1,0 +1,28 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+hidl_interface {
+    name: "fireos.hardware.audio@6.0",
+    root: "fireos.hardware",
+    system_ext_specific: true,
+    srcs: [
+        "IDevice.hal",
+        "IDevicesFactory.hal",
+        "IPrimaryDevice.hal",
+        "IStream.hal",
+        "IStreamIn.hal",
+        "IStreamOut.hal",
+        "IStreamOutCallback.hal",
+        "IStreamOutEventCallback.hal",
+    ],
+    interfaces: [
+        "android.hardware.audio.common@6.0",
+        "android.hardware.audio.effect@6.0",
+        "android.hardware.audio@6.0",
+        "android.hidl.base@1.0",
+        "android.hidl.safe_union@1.0",
+    ],
+    gen_java: false,
+}
