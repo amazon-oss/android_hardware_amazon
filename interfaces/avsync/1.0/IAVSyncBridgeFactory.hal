@@ -1,0 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.avsync@1.0;
+
+import android.hardware.audio.common@4.0::AudioDevice;
+
+import IBridge;
+
+interface IAVSyncBridgeFactory {
+    createAVSyncBridge(AudioDevice device, uint32_t hwAvSyncId)
+        generates (Result retval, IBridge bridge);
+};

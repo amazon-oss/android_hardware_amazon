@@ -1,0 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.avsync@1.0;
+
+enum Result : int32_t {
+    OK = 0,
+    NOT_INITIALIZED = 1,
+    INVALID_ARGUMENTS = 2,
+    INVALID_STATE = 3,
+    NOT_SUPPORTED = 4,
+};

@@ -1,0 +1,17 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.avsync@1.0;
+
+interface IBridge {
+    getHwSync() generates (Result retval, uint32_t hwAvSyncId);
+    setLatency(uint64_t latencyNs) generates (Result retval);
+    start() generates (Result retval);
+    pause() generates (Result retval);
+    resume() generates (Result retval);
+    stop() generates (Result retval);
+    updateTimestamp(uint64_t timestamp) generates (Result retval);
+    getTimestamp() generates (Result retval, uint64_t timestamp);
+};
