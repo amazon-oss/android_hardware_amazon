@@ -1,0 +1,17 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+hidl_interface {
+    name: "fireos.hardware.connectivity.networkpower@1.0",
+    root: "fireos.hardware",
+    system_ext_specific: true,
+    srcs: [
+        "INetworkPower.hal",
+    ],
+    interfaces: [
+        "android.hidl.base@1.0",
+    ],
+    gen_java: false,
+}

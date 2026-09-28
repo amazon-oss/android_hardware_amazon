@@ -1,0 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.connectivity.networkpower@1.0;
+
+interface INetworkPower {
+    setWakeOnNetworkSetting(bool enable) generates (int32_t result);
+    getWakeOnNetworkSetting() generates (int32_t setting);
+};
