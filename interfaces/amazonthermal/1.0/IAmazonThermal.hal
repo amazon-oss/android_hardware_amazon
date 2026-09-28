@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.amazonthermal@1.0;
+
+import IAmazonThermalCallback;
+
+interface IAmazonThermal {
+    get_data(ThermalDataType type, int32_t index) generates (int32_t value);
+    registerThermalCallback(IAmazonThermalCallback callback);
+};

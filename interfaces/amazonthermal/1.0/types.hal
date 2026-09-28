@@ -1,0 +1,29 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.amazonthermal@1.0;
+
+enum AmazonThermalStatus : int32_t {
+    THERMAL_STATUS_OK = 0,
+    THERMAL_STATUS_ERROR = 1,
+};
+
+enum ThermalDataType : uint32_t {
+    THERMAL_TEMP_VIRTUAL = 0,
+    THERMAL_TRIP_TIME_VIRTUAL = 1,
+    THERMAL_TRIP_USAGE_VIRTUAL = 2,
+    THERMAL_LOCAL_MAX_VIRTUAL = 3,
+    THERMAL_CTRIP_VIRTUAL = 4,
+    THERMAL_TEMP_CPU = 5,
+    THERMAL_CPU_STATUS = 6,
+    THERMAL_CPU_FREQ = 7,
+    THERMAL_GPU_FREQ = 8,
+    THERMAL_LCD_LEVEL = 9,
+    THERMAL_CHARGER_LIMIT = 10,
+    THERMAL_CPU_FREQ_MAX = 11,
+    THERMAL_CPU_FREQ_MIN = 12,
+    THERMAL_TEMP = 13,
+    THERMAL_SHUTDOWN = 14,
+};

@@ -1,0 +1,19 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+hidl_interface {
+    name: "fireos.hardware.amazonthermal@1.0",
+    root: "fireos.hardware",
+    system_ext_specific: true,
+    srcs: [
+        "types.hal",
+        "IAmazonThermal.hal",
+        "IAmazonThermalCallback.hal",
+    ],
+    interfaces: [
+        "android.hidl.base@1.0",
+    ],
+    gen_java: true,
+}
