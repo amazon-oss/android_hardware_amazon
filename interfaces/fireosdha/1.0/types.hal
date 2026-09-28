@@ -1,0 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.fireosdha@1.0;
+
+enum DhaStatus : uint32_t {
+    DHA_STATUS_OK = 0,
+    DHA_STATUS_ERROR = 1,
+    DHA_STATUS_NOT_SUPPORT = 2,
+};

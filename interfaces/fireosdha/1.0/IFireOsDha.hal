@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.fireosdha@1.0;
+
+interface IFireOsDha {
+    sign(vec<uint8_t> data) generates (DhaStatus status, vec<uint8_t> signature);
+    verify(vec<uint8_t> data, vec<uint8_t> signature) generates (bool verified);
+    getDhaPublicKey() generates (DhaStatus status, vec<uint8_t> publicKey);
+    getDhaHmac() generates (DhaStatus status, vec<uint8_t> hmac);
+};
