@@ -1,0 +1,18 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.amazonhmod@1.0;
+
+enum HmodState : uint32_t {
+    UNKNOWN = 0,
+    STILL_FLAT = 1,
+    STILL_PORTRAIT = 2,
+    STILL_LANDSCAPE_RIGHT = 3,
+    STILL_LANDSCAPE_LEFT = 4,
+    MOVING_FLAT = 5,
+    MOVING_PORTRAIT = 6,
+    MOVING_LANDSCAPE_RIGHT = 7,
+    MOVING_LANDSCAPE_LEFT = 8,
+};

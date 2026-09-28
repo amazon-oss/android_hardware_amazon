@@ -1,0 +1,3 @@
+439c4e65e64d0c4b87b7b72a23978dffa66b0032ea08488740f1839aeb921581 fireos.hardware.amazonhmod@1.0::types
+0e112257ecd6f71ae8d50e9a610dcdbce8b5721ed952e16fbca1504f7f328fd4 fireos.hardware.amazonhmod@1.0::IAmazonHmod
+30eb0fdf7bd1c2ad1c46afebd74ed904da154af20e7e204a6525b05d0302c583 fireos.hardware.amazonhmod@1.0::IAmazonHmodCallback

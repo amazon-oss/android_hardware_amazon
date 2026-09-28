@@ -1,0 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.amazonhmod@1.0;
+
+interface IAmazonHmodCallback {
+    oneway notifyHmodOnChanged(HmodState state);
+};
