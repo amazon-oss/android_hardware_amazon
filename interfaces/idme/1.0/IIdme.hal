@@ -1,0 +1,16 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.idme@1.0;
+
+interface IIdme {
+    getProductName() generates (string productName);
+    getMacAddress() generates (string macAddress);
+    getSecret() generates (string secret);
+    getSerialNumber() generates (string serialNumber);
+    getDeviceTypeId() generates (string deviceTypeId);
+    getBtMacAddress() generates (string btMacAddress);
+    getBtMfg() generates (string btMfg);
+};
