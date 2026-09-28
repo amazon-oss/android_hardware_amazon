@@ -1,0 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audiosignalprocessor@1.1;
+
+import @1.0::IHalAudioSignalProcessor;
+
+interface IHalAudioSignalProcessor extends @1.0::IHalAudioSignalProcessor {
+    command_1_1(AspCmdCode cmdCode, vec<int8_t> data) generates (int32_t status, vec<int8_t> reply);
+};

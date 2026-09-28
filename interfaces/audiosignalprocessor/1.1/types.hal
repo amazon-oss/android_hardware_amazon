@@ -1,0 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audiosignalprocessor@1.1;
+
+import @1.0::AspCmdCode;
+
+enum AspCmdCode : @1.0::AspCmdCode {
+    ASP_CMD_NOTIFY_ALEXA_HANDSFREE_ENABLED = 0x1000,
+    ASP_CMD_NOTIFY_SCREEN_STATE = 0x1001,
+    ASP_CMD_NOTIFY_ASR_PIPELINE_STATE = 0x1002,
+    ASP_CMD_NOTIFY_ENV_DATA = 0x2000,
+};
