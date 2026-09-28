@@ -1,0 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audiosignalprocessor@1.0;
+
+interface IHalAudioEventListener {
+    oneway onEvent(int32_t eventType, vec<int8_t> data);
+};

@@ -1,0 +1,40 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.audiosignalprocessor@1.0;
+
+import android.hardware.audio.common@4.0::AudioFormat;
+
+import IHalAudioEventListener;
+
+interface IHalAudioSignalProcessor {
+    registerListener(IHalAudioEventListener listener);
+    unregisterListener(IHalAudioEventListener listener);
+    command(AspCmdCode cmdCode, vec<int8_t> data) generates (int32_t status, vec<int8_t> reply);
+    startCapture(
+        int32_t pipeline,
+        handle captureFd0,
+        handle captureFd1,
+        handle captureFd2,
+        handle captureFd3)
+        generates (int32_t status);
+    stopCapture(int32_t pipeline) generates (int32_t status);
+    startIrCodeDetection(bool start) generates (int32_t status);
+    setActiveInputSource(int32_t device, vec<int8_t> params) generates (int32_t status);
+    onWakeWordModelChanged(string model, string language) generates (int32_t status);
+    initAsp() generates (int32_t status);
+    createAspPipeline(
+        AspPipelineType type,
+        AudioFormat inFormat,
+        int32_t inChannels,
+        int32_t inSampleRate,
+        AudioFormat outFormat,
+        int32_t outChannels,
+        int32_t outSampleRate)
+        generates (int32_t status, memory sharedMemory);
+    destroyAspPipeline(AspPipelineType type) generates (int32_t status);
+    processAspData(AspPipelineType type, int32_t size) generates (int32_t status);
+    setAspDevice(AspPipelineType type, int32_t device) generates (int32_t status);
+};
