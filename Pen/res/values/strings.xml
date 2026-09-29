@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SPDX-FileCopyrightText: The LineageOS Project
+    SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" translatable="false">Amazon Pen</string>
+    <string name="pen_notification_channel">Stylus</string>
+    <string name="pen_low_battery_title">Stylus battery low</string>
+    <string name="pen_low_battery_text"><xliff:g id="level" example="20">%1$d</xliff:g>%% remaining. Replace the stylus battery soon.</string>
+</resources>
