@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SPDX-FileCopyrightText: The LineageOS Project
+    SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Pen battery level at or below which the user is warned. -->
+    <integer name="config_penLowBatteryThreshold">40</integer>
+</resources>
