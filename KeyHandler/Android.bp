@@ -1,0 +1,19 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+android_app {
+    name: "AmazonKeyHandler",
+
+    srcs: ["src/**/*.kt"],
+
+    certificate: "platform",
+    platform_apis: true,
+    privileged: true,
+    system_ext_specific: true,
+
+    optimize: {
+        proguard_flags_files: ["proguard.flags"],
+    },
+}
