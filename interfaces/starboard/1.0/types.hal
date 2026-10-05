@@ -1,0 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.starboard@1.0;
+
+enum Status : uint32_t {
+    STATUS_OK = 0,
+    STATUS_GENERAL_ERROR = 1,
+    STATUS_NOT_PROVISIONED = 2,
+};
