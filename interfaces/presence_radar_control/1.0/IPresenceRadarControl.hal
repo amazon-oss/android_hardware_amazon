@@ -1,0 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.presence_radar_control@1.0;
+
+interface IPresenceRadarControl {
+    setRadarOperationMode(OperationMode mode) generates (int32_t result);
+};

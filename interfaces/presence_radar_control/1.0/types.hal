@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.presence_radar_control@1.0;
+
+enum OperationMode : int32_t {
+    RADAR_OFF = 0,
+    RADAR_LOW_DISTANCE_MODE = 1,
+    RADAR_MID_DISTANCE_MODE = 2,
+    RADAR_HIGH_DISTANCE_MODE = 3,
+};
