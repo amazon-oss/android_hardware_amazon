@@ -1,0 +1,13 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.idme@1.1;
+
+enum IdmeStatus : int32_t {
+    IDME_STATUS_OK = 0,
+    IDME_STATUS_ERROR = 1,
+    IDME_STATUS_NOT_FOUND = 2,
+    IDME_STATUS_SIZE_ERROR = 3,
+};
