@@ -1,0 +1,12 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.starboard@1.0;
+
+interface IStarboard {
+    signWithCertificationSecretKey(vec<uint8_t> message)
+        generates (Status status, vec<uint8_t> signature);
+    getCertificationScope() generates (Status status, vec<uint8_t> scope);
+};
