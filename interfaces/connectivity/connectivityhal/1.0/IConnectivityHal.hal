@@ -1,0 +1,10 @@
+/*
+ * SPDX-FileCopyrightText: The LineageOS Project
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package fireos.hardware.connectivity.connectivityhal@1.0;
+
+interface IConnectivityHal {
+    oneway setMulticastAllowed(string iface, bool allowed);
+};
