@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#define LOG_TAG "android.hardware.graphics.composer@2.1-service"
+#define LOG_TAG "android.hardware.graphics.composer@2.1-service.amazon_tv"
 
 #include <sched.h>
 
@@ -24,8 +24,56 @@
 #include <composer-passthrough/2.1/HwcLoader.h>
 #include <hidl/LegacySupport.h>
 
+using android::hardware::graphics::composer::V2_1::Config;
+using android::hardware::graphics::composer::V2_1::Display;
+using android::hardware::graphics::composer::V2_1::Error;
 using android::hardware::graphics::composer::V2_1::IComposer;
+using android::hardware::graphics::composer::V2_1::IComposerClient;
+using android::hardware::graphics::composer::V2_1::passthrough::HwcHal;
 using android::hardware::graphics::composer::V2_1::passthrough::HwcLoader;
+
+namespace {
+
+constexpr int32_t kAttributeConfigGroup = 7;
+
+// HDMI mode switches are never seamless, so every config gets its own group
+class AmazonTvHwcHal : public HwcHal {
+  public:
+    Error getDisplayAttribute(Display display, Config config, IComposerClient::Attribute attribute,
+                              int32_t* outValue) override {
+        if (static_cast<int32_t>(attribute) == kAttributeConfigGroup) {
+            *outValue = static_cast<int32_t>(config);
+            return Error::NONE;
+        }
+
+        return HwcHal::getDisplayAttribute(display, config, attribute, outValue);
+    }
+};
+
+class AmazonTvHwcLoader : public HwcLoader {
+  public:
+    static IComposer* load() {
+        const hw_module_t* module = loadModule();
+        if (!module) {
+            return nullptr;
+        }
+
+        bool adapted;
+        hwc2_device_t* device = openDeviceWithAdapter(module, &adapted);
+        if (!device) {
+            return nullptr;
+        }
+
+        auto hal = std::make_unique<AmazonTvHwcHal>();
+        if (!hal->initWithDevice(device, !adapted)) {
+            return nullptr;
+        }
+
+        return createComposer(std::move(hal));
+    }
+};
+
+}  // namespace
 
 int main() {
     // the conventional HAL might start binder services
@@ -43,7 +91,7 @@ int main() {
 
     android::hardware::configureRpcThreadpool(4, true /* will join */);
 
-    android::sp<IComposer> composer = HwcLoader::load();
+    android::sp<IComposer> composer = AmazonTvHwcLoader::load();
     if (composer == nullptr) {
         return 1;
     }
