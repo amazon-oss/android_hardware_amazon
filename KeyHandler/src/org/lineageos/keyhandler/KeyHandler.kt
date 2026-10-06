@@ -37,6 +37,8 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     private val keyguardManager by lazy { context.getSystemService(KeyguardManager::class.java)!! }
     private val usbManager by lazy { context.getSystemService(UsbManager::class.java)!! }
 
+    private val remoteAppButtons by lazy { RemoteAppButtons(context) }
+
     private var connection: UsbDeviceConnection? = null
     private var endpoint: UsbEndpoint? = null
 
@@ -93,6 +95,19 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     }
 
     override fun handleKeyEvent(event: KeyEvent): KeyEvent? {
+        val device = inputManager.getInputDevice(event.deviceId)
+        if (device.isFireTvRemote && RemoteAppButtons.handles(event.scanCode)) {
+            if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0 && canLaunch()) {
+                handler.post {
+                    runCatching { remoteAppButtons.launch(device!!, event.scanCode) }.onFailure {
+                        Log.e(TAG, "Failed to handle app button ${event.scanCode}", it)
+                    }
+                }
+            }
+
+            return null
+        }
+
         val action: () -> Unit =
             when (event.scanCode) {
                 SCANCODE_FILES -> ::launchFiles
@@ -101,7 +116,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                 else -> return event
             }
 
-        if (!inputManager.getInputDevice(event.deviceId).isAmazonKeyboard) {
+        if (!device.isAmazonKeyboard) {
             return event
         }
 
@@ -235,6 +250,9 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
 
     private val InputDevice?.isAmazonKeyboard: Boolean
         get() = this != null && vendorId == VENDOR_ID && productId == PRODUCT_ID
+
+    private val InputDevice?.isFireTvRemote: Boolean
+        get() = this != null && vendorId == RemoteAppButtons.VENDOR_ID
 
     private val UsbDevice?.isAmazonKeyboard: Boolean
         get() = this != null && vendorId == VENDOR_ID && productId == PRODUCT_ID
