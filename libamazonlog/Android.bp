@@ -1,12 +1,16 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
 cc_library_shared {
     name: "libamazonlog",
-    proprietary: true,
-    defaults: ["hidl_defaults"],
-    srcs: [
-        "metrics_logd_writer.c",
-        "logd_writer.c",
-    ],
-    shared_libs: [
-        "liblog",
+    vendor: true,
+    srcs: ["amazonlog.c"],
+    shared_libs: ["liblog"],
+    cflags: [
+        "-Wall",
+        "-Werror",
+        "-Wextra",
     ],
 }
