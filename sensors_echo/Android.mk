@@ -9,7 +9,7 @@ include $(CLEAR_VARS)
 
 # HAL module implementation, not prelinked, and stored in
 # hw/<SENSORS_HARDWARE_MODULE_ID>.echo.so
-LOCAL_MODULE := sensors.echo
+LOCAL_MODULE := sensors.amazon
 LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE_RELATIVE_PATH := hw
 LOCAL_HEADER_LIBRARIES += libhardware_headers
