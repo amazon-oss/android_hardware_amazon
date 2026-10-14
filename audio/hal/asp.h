@@ -8,6 +8,7 @@
 #include <system/audio.h>
 
 #define ASP_CMD_SET_VOLUME 5
+#define ASP_CMD_NOTIFY_VOICE_VOLUME 101
 
 #define ASP_VOLUME_MAX 30
 
