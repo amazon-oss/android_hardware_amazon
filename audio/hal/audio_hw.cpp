@@ -96,7 +96,13 @@ static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_s
  * no pipeline for plain mic captures. Use the voice one, it has AGC and NR.
  */
 static audio_source_t remap_input_source(audio_source_t source) {
-    return source == AUDIO_SOURCE_MIC ? AUDIO_SOURCE_VOICE_COMMUNICATION : source;
+    switch (source) {
+        case AUDIO_SOURCE_MIC:
+        case AUDIO_SOURCE_CAMCORDER:
+            return AUDIO_SOURCE_VOICE_COMMUNICATION;
+        default:
+            return source;
+    }
 }
 
 static int adev_set_parameters(struct audio_hw_device* dev, const char* kvpairs) {
@@ -202,7 +208,7 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
      */
     if (amazon_source == AUDIO_SOURCE_VOICE_COMMUNICATION)
         asp_send_command(ASP_CMD_SET_VOLUME, ASP_VOLUME_MAX);
-    stream_in_ext->mic_capture = source == AUDIO_SOURCE_MIC;
+    stream_in_ext->mic_capture = amazon_source != source;
 
     /* legacy_in is now pointing to the HAL's allocated legacy_audio_stream_in */
     stream_in_ext->legacy_stream = (struct legacy_audio_stream_in*)legacy_in;
