@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 The LineageOS Project
+  SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <string name="app_name">Echo Parts</string>
+    <string name="camera_shutter_title">Camera shutter</string>
+    <string name="camera_shutter_summary">Open the camera when the shutter is opened</string>
+    <string name="camera_shutter_launch_title">Open camera</string>
+    <string name="camera_shutter_launch_summary">Launch the camera when the camera shutter is opened</string>
+</resources>

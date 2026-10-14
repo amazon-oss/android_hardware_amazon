@@ -1,0 +1,19 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+android_app {
+    name: "EchoParts",
+    srcs: ["src/**/*.java"],
+    resource_dirs: ["res"],
+    certificate: "platform",
+    platform_apis: true,
+    required: ["init.echoparts.rc"],
+}
+
+prebuilt_etc {
+    name: "init.echoparts.rc",
+    src: "init.echoparts.rc",
+    sub_dir: "init",
+}

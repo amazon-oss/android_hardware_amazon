@@ -1,0 +1,8 @@
+on post-fs-data
+    write /sys/devices/platform/gpio-keys/disabled_switches 9
+
+on property:persist.sys.camera.shutter_launch=0
+    write /sys/devices/platform/gpio-keys/disabled_switches 9
+
+on property:persist.sys.camera.shutter_launch=1
+    write /sys/devices/platform/gpio-keys/disabled_switches " "
