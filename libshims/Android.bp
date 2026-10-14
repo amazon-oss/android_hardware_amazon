@@ -1,4 +1,10 @@
 cc_library_shared {
+    name: "libbase_shim",
+    srcs: ["libbase/strings.cpp"],
+    vendor: true,
+}
+
+cc_library_shared {
     name: "libbinder_shim",
     srcs: [
         "libbinder/IInterface.cpp",
