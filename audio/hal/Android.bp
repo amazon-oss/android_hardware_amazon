@@ -20,3 +20,20 @@ cc_library_shared {
     ],
     cflags: ["-Wall", "-Werror", "-Wno-unused-parameter"],
 }
+
+cc_library_shared {
+    name: "audio.primary.mt8183",
+    relative_install_path: "hw",
+    vendor: true,
+    compile_multilib: "32",
+    srcs: [
+        "asp.cpp",
+        "audio_hw_p.cpp",
+        "audio_stream_p.cpp",
+    ],
+    shared_libs: [
+        "libhardware",
+        "liblog",
+    ],
+    cflags: ["-Wall", "-Werror", "-Wno-unused-parameter"],
+}
