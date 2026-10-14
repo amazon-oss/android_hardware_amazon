@@ -10,6 +10,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := android.hardware.audio.common@4.0-util-v28
 LOCAL_MULTILIB := 32
 LOCAL_SRC_FILES_arm := v28/$(VNDK_ARM_DIR)/shared/vndk-core/android.hardware.audio.common@4.0-util.so
+LOCAL_SHARED_LIBRARIES := android.hardware.audio.common-util
 LOCAL_MODULE_SUFFIX := .so
 LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_MODULE_TARGET_ARCH := arm
