@@ -1,0 +1,20 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_shared {
+    name: "audio.primary.amazon_wrapper",
+    relative_install_path: "hw",
+    vendor: true,
+    compile_multilib: "32",
+    srcs: [
+        "audio_hw.cpp",
+        "audio_stream.cpp",
+    ],
+    shared_libs: [
+        "libhardware",
+        "liblog",
+    ],
+    cflags: ["-Wall", "-Werror", "-Wno-unused-parameter"],
+}
