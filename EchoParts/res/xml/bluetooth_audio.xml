@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: 2026 The LineageOS Project
+  SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="bluetooth_audio_mode"
+        android:persistent="false"
+        android:title="@string/bluetooth_audio_mode_title"
+        android:summary="%s"
+        android:entries="@array/bluetooth_audio_mode_entries"
+        android:entryValues="@array/bluetooth_audio_mode_values" />
+
+</PreferenceScreen>
