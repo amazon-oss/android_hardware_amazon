@@ -6,6 +6,7 @@
 #define LOG_TAG "audio.amazon_wrapper"
 
 #include <errno.h>
+#include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,8 +47,10 @@ static int adev_init_check(const struct v28_audio_hw_device* dev) {
 
 static int adev_set_voice_volume(struct v28_audio_hw_device* dev, float volume) {
     struct v28_audio_hw_device* adev = to_amazon(dev);
+    int rc = adev->set_voice_volume(adev, volume);
 
-    return adev->set_voice_volume(adev, volume);
+    asp_send_command(ASP_CMD_NOTIFY_VOICE_VOLUME, lroundf(volume * 100));
+    return rc;
 }
 
 static int adev_set_master_volume(struct v28_audio_hw_device* dev, float volume) {
