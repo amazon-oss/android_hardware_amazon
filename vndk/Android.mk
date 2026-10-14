@@ -17,6 +17,9 @@ LOCAL_MODULE_TARGET_ARCH := arm
 LOCAL_MODULE_TAGS := optional
 LOCAL_CHECK_ELF_FILES := false
 LOCAL_VENDOR_MODULE := true
+LOCAL_POST_INSTALL_CMD := \
+    prebuilts/extract-tools/linux-x86/bin/patchelf-0_9 --set-soname $(LOCAL_MODULE).so \
+        $(TARGET_OUT_VENDOR)/lib/$(LOCAL_MODULE).so
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
