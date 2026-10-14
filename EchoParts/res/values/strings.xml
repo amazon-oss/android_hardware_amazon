@@ -9,4 +9,10 @@
     <string name="camera_shutter_summary">Open the camera when the shutter is opened</string>
     <string name="camera_shutter_launch_title">Open camera</string>
     <string name="camera_shutter_launch_summary">Launch the camera when the camera shutter is opened</string>
+
+    <string name="bluetooth_audio_title">Bluetooth audio</string>
+    <string name="bluetooth_audio_summary">Use this device as a speaker or play audio on other devices</string>
+    <string name="bluetooth_audio_mode_title">Mode</string>
+    <string name="bluetooth_audio_mode_sink">Speaker, play audio from other devices</string>
+    <string name="bluetooth_audio_mode_source">Source, play audio on Bluetooth speakers and headphones</string>
 </resources>
