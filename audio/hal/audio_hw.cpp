@@ -91,20 +91,6 @@ static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_s
     return ctx->amazon_device->close_output_stream(ctx->amazon_device, stream);
 }
 
-/*
- * The HAL only runs Amazon's capture processing for voice sources, there is
- * no pipeline for plain mic captures. Use the voice one, it has AGC and NR.
- */
-static audio_source_t remap_input_source(audio_source_t source) {
-    switch (source) {
-        case AUDIO_SOURCE_MIC:
-        case AUDIO_SOURCE_CAMCORDER:
-            return AUDIO_SOURCE_VOICE_COMMUNICATION;
-        default:
-            return source;
-    }
-}
-
 static int adev_set_parameters(struct audio_hw_device* dev, const char* kvpairs) {
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
 
