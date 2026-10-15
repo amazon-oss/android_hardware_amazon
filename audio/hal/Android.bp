@@ -4,17 +4,12 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
-cc_library_shared {
-    name: "audio.primary.amazon_wrapper",
+cc_defaults {
+    name: "audio_amazon_wrapper_defaults",
     relative_install_path: "hw",
     vendor: true,
-    srcs: [
-        "asp.cpp",
-        "audio_hw.cpp",
-        "audio_stream.cpp",
-    ],
+    srcs: ["asp.cpp"],
     shared_libs: [
-        "libcutils",
         "libhardware",
         "liblog",
     ],
@@ -22,18 +17,21 @@ cc_library_shared {
 }
 
 cc_library_shared {
-    name: "audio.primary.mt8183",
-    relative_install_path: "hw",
-    vendor: true,
+    name: "audio.primary.amazon_wrapper",
+    defaults: ["audio_amazon_wrapper_defaults"],
+    srcs: [
+        "legacy/audio_hw.cpp",
+        "legacy/audio_stream.cpp",
+    ],
+    shared_libs: ["libcutils"],
+}
+
+cc_library_shared {
+    name: "audio.primary.amazon_wrapper_v28",
+    defaults: ["audio_amazon_wrapper_defaults"],
     compile_multilib: "32",
     srcs: [
-        "asp.cpp",
-        "audio_hw_p.cpp",
-        "audio_stream_p.cpp",
+        "v28/audio_hw.cpp",
+        "v28/audio_stream.cpp",
     ],
-    shared_libs: [
-        "libhardware",
-        "liblog",
-    ],
-    cflags: ["-Wall", "-Werror", "-Wno-unused-parameter"],
 }
