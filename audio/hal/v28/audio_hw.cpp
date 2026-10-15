@@ -18,114 +18,114 @@
 #include <system/audio.h>
 
 #include "asp.h"
-#include "audio_amazon_p.h"
+#include "audio_amazon.h"
 
-struct p_wrapper_audio_device {
-    struct p_audio_hw_device device;
-    struct p_audio_hw_device* amazon_device;
+struct v28_wrapper_audio_device {
+    struct v28_audio_hw_device device;
+    struct v28_audio_hw_device* amazon_device;
 };
 
-static_assert(offsetof(struct p_audio_hw_device, set_audio_port_config) ==
+static_assert(offsetof(struct v28_audio_hw_device, set_audio_port_config) ==
                       offsetof(struct audio_hw_device, set_audio_port_config),
-              "p_audio_hw_device must match audio_hw_device up to set_audio_port_config");
+              "v28_audio_hw_device must match audio_hw_device up to set_audio_port_config");
 
-static struct p_audio_hw_device* to_amazon(const struct p_audio_hw_device* dev) {
-    return reinterpret_cast<const struct p_wrapper_audio_device*>(dev)->amazon_device;
+static struct v28_audio_hw_device* to_amazon(const struct v28_audio_hw_device* dev) {
+    return reinterpret_cast<const struct v28_wrapper_audio_device*>(dev)->amazon_device;
 }
 
-static uint32_t adev_get_supported_devices(const struct p_audio_hw_device* dev) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static uint32_t adev_get_supported_devices(const struct v28_audio_hw_device* dev) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_supported_devices(adev);
 }
 
-static int adev_init_check(const struct p_audio_hw_device* dev) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_init_check(const struct v28_audio_hw_device* dev) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->init_check(adev);
 }
 
-static int adev_set_voice_volume(struct p_audio_hw_device* dev, float volume) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_voice_volume(struct v28_audio_hw_device* dev, float volume) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
     int rc = adev->set_voice_volume(adev, volume);
 
     asp_send_command(ASP_CMD_NOTIFY_VOICE_VOLUME, lroundf(volume * 100));
     return rc;
 }
 
-static int adev_set_master_volume(struct p_audio_hw_device* dev, float volume) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_master_volume(struct v28_audio_hw_device* dev, float volume) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_master_volume(adev, volume);
 }
 
-static int adev_get_master_volume(struct p_audio_hw_device* dev, float* volume) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_get_master_volume(struct v28_audio_hw_device* dev, float* volume) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_master_volume(adev, volume);
 }
 
-static int adev_set_mode(struct p_audio_hw_device* dev, audio_mode_t mode) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_mode(struct v28_audio_hw_device* dev, audio_mode_t mode) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_mode(adev, mode);
 }
 
-static int adev_set_mic_mute(struct p_audio_hw_device* dev, bool state) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_mic_mute(struct v28_audio_hw_device* dev, bool state) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_mic_mute(adev, state);
 }
 
-static int adev_get_mic_mute(const struct p_audio_hw_device* dev, bool* state) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_get_mic_mute(const struct v28_audio_hw_device* dev, bool* state) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_mic_mute(adev, state);
 }
 
-static int adev_set_parameters(struct p_audio_hw_device* dev, const char* kv_pairs) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_parameters(struct v28_audio_hw_device* dev, const char* kv_pairs) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_parameters(adev, kv_pairs);
 }
 
-static char* adev_get_parameters(const struct p_audio_hw_device* dev, const char* keys) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static char* adev_get_parameters(const struct v28_audio_hw_device* dev, const char* keys) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_parameters(adev, keys);
 }
 
-static size_t adev_get_input_buffer_size(const struct p_audio_hw_device* dev,
+static size_t adev_get_input_buffer_size(const struct v28_audio_hw_device* dev,
                                          const struct audio_config* config) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_input_buffer_size(adev, config);
 }
 
-static int adev_open_output_stream(struct p_audio_hw_device* dev, audio_io_handle_t handle,
+static int adev_open_output_stream(struct v28_audio_hw_device* dev, audio_io_handle_t handle,
                                    audio_devices_t devices, audio_output_flags_t flags,
                                    struct audio_config* config,
                                    struct audio_stream_out** stream_out, const char* address) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->open_output_stream(adev, handle, devices, flags, config, stream_out, address);
 }
 
-static void adev_close_output_stream(struct p_audio_hw_device* dev,
+static void adev_close_output_stream(struct v28_audio_hw_device* dev,
                                      struct audio_stream_out* stream_out) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     adev->close_output_stream(adev, stream_out);
 }
 
-static int adev_open_input_stream(struct p_audio_hw_device* dev, audio_io_handle_t handle,
+static int adev_open_input_stream(struct v28_audio_hw_device* dev, audio_io_handle_t handle,
                                   audio_devices_t devices, struct audio_config* config,
-                                  struct p_audio_stream_in** stream_in, audio_input_flags_t flags,
+                                  struct v28_audio_stream_in** stream_in, audio_input_flags_t flags,
                                   const char* address, audio_source_t source) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
     audio_source_t amazon_source = remap_input_source(source);
-    struct p_audio_stream_in* amazon_stream = nullptr;
-    struct p_audio_stream_in_ext* in;
+    struct v28_audio_stream_in* amazon_stream = nullptr;
+    struct v28_audio_stream_in_ext* in;
     int rc;
 
     rc = adev->open_input_stream(adev, handle, devices, config, &amazon_stream, flags, address,
@@ -133,7 +133,7 @@ static int adev_open_input_stream(struct p_audio_hw_device* dev, audio_io_handle
     if (rc)
         return rc;
 
-    in = create_p_audio_stream_in_ext(amazon_stream);
+    in = create_v28_audio_stream_in_ext(amazon_stream);
     if (!in) {
         adev->close_input_stream(adev, amazon_stream);
         return -ENOMEM;
@@ -147,47 +147,47 @@ static int adev_open_input_stream(struct p_audio_hw_device* dev, audio_io_handle
     return 0;
 }
 
-static void adev_close_input_stream(struct p_audio_hw_device* dev,
-                                    struct p_audio_stream_in* stream_in) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
-    struct p_audio_stream_in_ext* in = reinterpret_cast<struct p_audio_stream_in_ext*>(stream_in);
+static void adev_close_input_stream(struct v28_audio_hw_device* dev,
+                                    struct v28_audio_stream_in* stream_in) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_stream_in_ext* in = reinterpret_cast<struct v28_audio_stream_in_ext*>(stream_in);
 
     adev->close_input_stream(adev, in->amazon_stream);
     free(in);
 }
 
-static int adev_get_microphones(const struct p_audio_hw_device* dev,
+static int adev_get_microphones(const struct v28_audio_hw_device* dev,
                                 struct audio_microphone_characteristic_t* mic_array,
                                 size_t* mic_count) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_microphones(adev, mic_array, mic_count);
 }
 
-static int adev_dump(const struct p_audio_hw_device* dev, int fd) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_dump(const struct v28_audio_hw_device* dev, int fd) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->dump(adev, fd);
 }
 
-static int adev_set_master_mute(struct p_audio_hw_device* dev, bool mute) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_set_master_mute(struct v28_audio_hw_device* dev, bool mute) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_master_mute(adev, mute);
 }
 
-static int adev_get_master_mute(struct p_audio_hw_device* dev, bool* mute) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_get_master_mute(struct v28_audio_hw_device* dev, bool* mute) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_master_mute(adev, mute);
 }
 
-static int adev_create_audio_patch(struct p_audio_hw_device* dev, unsigned int num_sources,
+static int adev_create_audio_patch(struct v28_audio_hw_device* dev, unsigned int num_sources,
                                    const struct amazon_audio_port_config* sources,
                                    unsigned int num_sinks,
                                    const struct amazon_audio_port_config* sinks,
                                    audio_patch_handle_t* handle) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
     struct amazon_audio_port_config amazon_sinks[AUDIO_PATCH_PORTS_MAX];
 
     if (num_sinks > AUDIO_PATCH_PORTS_MAX)
@@ -203,27 +203,27 @@ static int adev_create_audio_patch(struct p_audio_hw_device* dev, unsigned int n
     return adev->create_audio_patch(adev, num_sources, sources, num_sinks, amazon_sinks, handle);
 }
 
-static int adev_release_audio_patch(struct p_audio_hw_device* dev, audio_patch_handle_t handle) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_release_audio_patch(struct v28_audio_hw_device* dev, audio_patch_handle_t handle) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->release_audio_patch(adev, handle);
 }
 
-static int adev_get_audio_port(struct p_audio_hw_device* dev, struct audio_port* port) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+static int adev_get_audio_port(struct v28_audio_hw_device* dev, struct audio_port* port) {
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->get_audio_port(adev, port);
 }
 
-static int adev_set_audio_port_config(struct p_audio_hw_device* dev,
+static int adev_set_audio_port_config(struct v28_audio_hw_device* dev,
                                       const struct amazon_audio_port_config* config) {
-    struct p_audio_hw_device* adev = to_amazon(dev);
+    struct v28_audio_hw_device* adev = to_amazon(dev);
 
     return adev->set_audio_port_config(adev, config);
 }
 
 static int adev_close(hw_device_t* device) {
-    struct p_wrapper_audio_device* ctx = reinterpret_cast<struct p_wrapper_audio_device*>(device);
+    struct v28_wrapper_audio_device* ctx = reinterpret_cast<struct v28_wrapper_audio_device*>(device);
 
     ctx->amazon_device->common.close(&ctx->amazon_device->common);
     free(ctx);
@@ -234,7 +234,7 @@ static int adev_close(hw_device_t* device) {
 #define FORWARD(field) adev->device.field = adev->amazon_device->field ? adev_##field : nullptr
 
 static int adev_open(const hw_module_t* module, const char* name, hw_device_t** device) {
-    struct p_wrapper_audio_device* adev;
+    struct v28_wrapper_audio_device* adev;
     const struct hw_module_t* amazon_module;
     int rc;
 
@@ -249,7 +249,7 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
         return rc;
     }
 
-    adev = (struct p_wrapper_audio_device*)calloc(1, sizeof(struct p_wrapper_audio_device));
+    adev = (struct v28_wrapper_audio_device*)calloc(1, sizeof(struct v28_wrapper_audio_device));
     if (!adev)
         return -ENOMEM;
 
