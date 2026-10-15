@@ -15,4 +15,11 @@
     <string name="bluetooth_audio_mode_title">Mode</string>
     <string name="bluetooth_audio_mode_sink">Speaker, play audio from other devices</string>
     <string name="bluetooth_audio_mode_source">Source, play audio on Bluetooth speakers and headphones</string>
+
+    <string name="mic_processing_title">Microphone processing</string>
+    <string name="mic_processing_summary">Choose how Amazon\'s audio processing cleans up the microphones</string>
+    <string name="mic_processing_mode_title">Mode</string>
+    <string name="mic_processing_mode_voice">Voice, cancel echo and background noise</string>
+    <string name="mic_processing_mode_far_field">Far-field, beamform all microphones for wake word and speech recognition apps</string>
+    <string name="mic_processing_mode_off">Off, record the raw microphones</string>
 </resources>
