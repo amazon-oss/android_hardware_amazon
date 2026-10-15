@@ -15,4 +15,9 @@
     <string name="bluetooth_audio_mode_title">Mode</string>
     <string name="bluetooth_audio_mode_sink">Speaker, play audio from other devices</string>
     <string name="bluetooth_audio_mode_source">Source, play audio on Bluetooth speakers and headphones</string>
+
+    <string name="noise_suppression_title">Noise suppression</string>
+    <string name="noise_suppression_summary">Clean up the microphone with Amazon\'s voice processing</string>
+    <string name="noise_suppression_enable_title">Use noise suppression</string>
+    <string name="noise_suppression_enable_summary">Cancel echo and background noise in recordings. Calls and voice chat apps always use it.</string>
 </resources>
