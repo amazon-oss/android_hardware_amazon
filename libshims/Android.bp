@@ -53,6 +53,13 @@ cc_library_shared {
 }
 
 cc_library_shared {
+    name: "libhardware_legacy_shim",
+    srcs: ["libhardware_legacy/uevent.c"],
+    shared_libs: ["libhardware_legacy"],
+    vendor: true,
+}
+
+cc_library_shared {
     name: "libmediautils_shim",
     srcs: ["libmediautils/SchedulingPolicyService.cpp"],
     shared_libs: ["libmediautils"],
