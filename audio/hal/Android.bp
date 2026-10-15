@@ -10,6 +10,7 @@ cc_defaults {
     vendor: true,
     srcs: ["asp.cpp"],
     shared_libs: [
+        "libcutils",
         "libhardware",
         "liblog",
     ],
@@ -23,7 +24,6 @@ cc_library_shared {
         "legacy/audio_hw.cpp",
         "legacy/audio_stream.cpp",
     ],
-    shared_libs: ["libcutils"],
 }
 
 cc_library_shared {

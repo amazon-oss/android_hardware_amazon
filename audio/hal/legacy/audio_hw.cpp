@@ -94,6 +94,7 @@ static void adev_close_output_stream(struct audio_hw_device* dev, struct audio_s
 static int adev_set_parameters(struct audio_hw_device* dev, const char* kvpairs) {
     amazon_wrapper_audio_device* ctx = reinterpret_cast<amazon_wrapper_audio_device*>(dev);
 
+    asp_set_parameters(kvpairs);
     return ctx->amazon_device->set_parameters(ctx->amazon_device, kvpairs);
 }
 

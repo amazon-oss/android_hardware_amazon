@@ -86,6 +86,7 @@ static int adev_get_mic_mute(const struct v28_audio_hw_device* dev, bool* state)
 static int adev_set_parameters(struct v28_audio_hw_device* dev, const char* kv_pairs) {
     struct v28_audio_hw_device* adev = to_amazon(dev);
 
+    asp_set_parameters(kv_pairs);
     return adev->set_parameters(adev, kv_pairs);
 }
 

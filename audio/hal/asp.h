@@ -13,18 +13,8 @@
 
 #define ASP_VOLUME_MAX 30
 
-int asp_send_command(int code, int value);
+#define ASP_PARAMETER_MIC_PROCESSING "amazon_mic_processing"
 
-/*
- * The HAL only runs Amazon's capture processing for voice sources, there is
- * no pipeline for plain mic captures. Use the voice one, it has AGC and NR.
- */
-static inline audio_source_t remap_input_source(audio_source_t source) {
-    switch (source) {
-        case AUDIO_SOURCE_MIC:
-        case AUDIO_SOURCE_CAMCORDER:
-            return AUDIO_SOURCE_VOICE_COMMUNICATION;
-        default:
-            return source;
-    }
-}
+int asp_send_command(int code, int value);
+void asp_set_parameters(const char* kv_pairs);
+audio_source_t remap_input_source(audio_source_t source);
