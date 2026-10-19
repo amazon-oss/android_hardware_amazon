@@ -1,0 +1,4 @@
+service vendor.battery_lifetime_data /vendor/bin/battery_lifetime_data
+    class main
+    user root
+    group system
