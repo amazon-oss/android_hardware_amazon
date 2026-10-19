@@ -19,13 +19,17 @@ typedef int (*asp_command_t)(void* pipeline, int code, int size, void* data, voi
                              int* reply_size);
 
 static asp_command_t get_asp_command() {
-    void* handle = dlopen("libasp.so", RTLD_NOW | RTLD_NOLOAD);
+    static const asp_command_t asp_command = [] {
+        void* handle = dlopen("libasp.so", RTLD_NOW | RTLD_NOLOAD);
 
-    return handle ? reinterpret_cast<asp_command_t>(dlsym(handle, "asp_command")) : nullptr;
+        return handle ? reinterpret_cast<asp_command_t>(dlsym(handle, "asp_command")) : nullptr;
+    }();
+
+    return asp_command;
 }
 
 int asp_send_command(int code, int value) {
-    static const asp_command_t asp_command = get_asp_command();
+    asp_command_t asp_command = get_asp_command();
 
     if (!asp_command)
         return -ENOSYS;
@@ -60,7 +64,7 @@ void asp_set_parameters(const char* kv_pairs) {
 audio_source_t remap_input_source(audio_source_t source) {
     audio_source_t target = mic_source;
 
-    if (target == AUDIO_SOURCE_DEFAULT)
+    if (target == AUDIO_SOURCE_DEFAULT || !get_asp_command())
         return source;
 
     switch (source) {
