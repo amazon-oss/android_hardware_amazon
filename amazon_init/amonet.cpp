@@ -35,6 +35,8 @@ constexpr AmonetLink kLinks[] = {
         {"boot_x", "boot", false, false},      {"recovery_x", "recovery", false, false},
         {"lk", "lk_real", true, false},        {"lk2", "lk2_real", true, true},
         {"tee1", "tee1_real", true, false},    {"tee2", "tee2_real", true, false},
+        {"boot0hdr0", "boot0hdr0_real", true, true}, {"boot0hdr1", "boot0hdr1_real", true, true},
+        {"boot0img0", "boot0img0_real", true, true}, {"boot0img1", "boot0img1_real", true, true},
 };
 
 void Remove(const std::string& path) {
