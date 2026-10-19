@@ -1,3 +1,6 @@
+on fs
+    exec - root root -- /vendor/bin/amazon_init --links
+
 service vendor.amazon_init /vendor/bin/amazon_init
     class main
     user root
