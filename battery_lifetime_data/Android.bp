@@ -1,0 +1,15 @@
+//
+// SPDX-FileCopyrightText: 2026 The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_binary {
+    name: "battery_lifetime_data",
+    init_rc: ["battery_lifetime_data.rc"],
+    srcs: [
+        "BatteryLifetimeData.cpp",
+        "main.cpp",
+    ],
+    shared_libs: ["libbase"],
+    vendor: true,
+}
