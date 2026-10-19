@@ -27,13 +27,14 @@ struct AmonetLink {
     const char* partition;
     const char* alias;
     bool hide;
+    bool optional;
 };
 
 constexpr AmonetLink kLinks[] = {
-        {"boot", "boot_amonet", false}, {"recovery", "recovery_amonet", false},
-        {"boot_x", "boot", false},      {"recovery_x", "recovery", false},
-        {"lk", "lk_real", true},        {"tee1", "tee1_real", true},
-        {"tee2", "tee2_real", true},
+        {"boot", "boot_amonet", false, false}, {"recovery", "recovery_amonet", false, false},
+        {"boot_x", "boot", false, false},      {"recovery_x", "recovery", false, false},
+        {"lk", "lk_real", true, false},        {"lk2", "lk2_real", true, true},
+        {"tee1", "tee1_real", true, false},    {"tee2", "tee2_real", true, false},
 };
 
 void Remove(const std::string& path) {
@@ -54,7 +55,7 @@ void SetupAmonetLinks() {
     std::vector<std::string> targets;
     for (const auto& link : kLinks) {
         std::string target;
-        if (!Realpath(kByName + link.partition, &target)) {
+        if (!Realpath(kByName + link.partition, &target) && !link.optional) {
             LOG(INFO) << "No " << link.partition << " partition, not an amonet layout";
             return;
         }
@@ -62,6 +63,8 @@ void SetupAmonetLinks() {
     }
 
     for (size_t i = 0; i < targets.size(); i++) {
+        if (targets[i].empty()) continue;
+
         const std::string partition = kByName + kLinks[i].partition;
 
         Remove(partition);
