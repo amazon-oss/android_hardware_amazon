@@ -1,0 +1,9 @@
+on boot
+    start vendor.thermal_policy
+
+service vendor.thermal_policy /vendor/bin/thermal_policy
+    class main
+    user root
+    group root system
+    disabled
+    oneshot
