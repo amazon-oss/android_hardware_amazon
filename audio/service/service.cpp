@@ -62,11 +62,6 @@ int main(int /* argc */, char* /* argv */[]) {
 
     const std::vector<InterfacesList> optionalInterfaces = {
         {
-            "Audiosignalprocessor API",
-            "fireos.hardware.audiosignalprocessor@1.1::IHalAudioSignalProcessor",
-            "fireos.hardware.audiosignalprocessor@1.0::IHalAudioSignalProcessor",
-        },
-        {
             "Bluetooth Audio API",
             "android.hardware.bluetooth.audio@2.0::IBluetoothAudioProvidersFactory",
         },
