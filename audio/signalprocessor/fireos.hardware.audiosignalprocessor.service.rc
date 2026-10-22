@@ -1,0 +1,11 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+service vendor.audio-asp /vendor/bin/hw/fireos.hardware.audiosignalprocessor.service
+    class hal
+    user audioserver
+    group audio media wakelock
+    capabilities BLOCK_SUSPEND
+    onrestart restart audioserver
