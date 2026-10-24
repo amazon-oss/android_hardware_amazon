@@ -8,6 +8,16 @@
 #include <system/audio.h>
 
 /**
+ * audio_port_config_device_ext as our audio HALs know it, from before
+ * speaker_layout_channel_mask was added.
+ */
+struct amazon_audio_port_config_device_ext {
+    audio_module_handle_t hw_module;
+    audio_devices_t type;
+    char address[AUDIO_DEVICE_MAX_ADDRESS_LEN];
+};
+
+/**
  * audio_port_config as our audio HALs know it, from before the flags field
  * was added in front of ext.
  */
@@ -21,7 +31,7 @@ struct amazon_audio_port_config {
     audio_format_t format;
     struct audio_gain_config gain;
     union {
-        struct audio_port_config_device_ext device;
+        struct amazon_audio_port_config_device_ext device;
         struct audio_port_config_mix_ext mix;
         struct audio_port_config_session_ext session;
     } ext;
