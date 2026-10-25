@@ -12,4 +12,7 @@
 
 #define ASP_VOLUME_MAX 30
 
+#define ASP_CAPTURE_SAMPLE_RATE 16000
+
 int asp_send_command(int code, int value);
+bool asp_runs_capture(audio_source_t source);
