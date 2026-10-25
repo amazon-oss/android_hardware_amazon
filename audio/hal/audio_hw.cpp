@@ -277,6 +277,17 @@ static int adev_open_input_stream(struct audio_hw_device* dev, audio_io_handle_t
     struct v28_audio_config amazon_config;
     int rc;
 
+    if (asp_runs_capture(source) &&
+        (config->sample_rate != ASP_CAPTURE_SAMPLE_RATE ||
+         config->channel_mask != AUDIO_CHANNEL_IN_MONO ||
+         config->format != AUDIO_FORMAT_PCM_16_BIT)) {
+        /* Reject it and suggest the correct config. */
+        config->sample_rate = ASP_CAPTURE_SAMPLE_RATE;
+        config->channel_mask = AUDIO_CHANNEL_IN_MONO;
+        config->format = AUDIO_FORMAT_PCM_16_BIT;
+        return -EINVAL;
+    }
+
     to_amazon_config(config, &amazon_config);
     rc = adev->open_input_stream(adev, handle, devices, &amazon_config, &amazon_stream, flags,
                                  address, source);

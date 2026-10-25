@@ -30,3 +30,12 @@ int asp_send_command(int code, int value) {
 
     return asp_command(nullptr, code, sizeof(value), &value, nullptr, nullptr);
 }
+
+/* The voice and ASR pipelines only output 16 kHz mono 16-bit. */
+bool asp_runs_capture(audio_source_t source) {
+    if (!get_asp_command())
+        return false;
+
+    return source == AUDIO_SOURCE_VOICE_COMMUNICATION ||
+           source == AUDIO_SOURCE_VOICE_RECOGNITION;
+}
