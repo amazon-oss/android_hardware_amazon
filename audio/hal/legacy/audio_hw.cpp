@@ -22,6 +22,8 @@
 #include <hardware/hardware.h>
 #include <system/audio.h>
 
+#include <cutils/properties.h>
+
 #include "asp.h"
 #include "audio_amazon.h"
 
@@ -32,6 +34,7 @@ struct amazon_wrapper_audio_device {
     audio_patch_handle_t next_patch_handle;
     struct listnode audio_patch_record_list;
     int hw_module;
+    bool headphone_as_speaker;
 };
 
 static_assert(offsetof(struct amazon_audio_offload_info, is_streaming) ==
@@ -69,6 +72,16 @@ static void from_amazon_config(const struct amazon_audio_config* amazon_config,
     config->frame_count = amazon_config->frame_count;
 }
 
+static audio_devices_t remap_output_devices(const amazon_wrapper_audio_device* ctx,
+                                            audio_devices_t devices) {
+    const audio_devices_t wired = AUDIO_DEVICE_OUT_WIRED_HEADSET | AUDIO_DEVICE_OUT_WIRED_HEADPHONE;
+
+    if (!ctx->headphone_as_speaker || !(devices & wired))
+        return devices;
+
+    return (devices & ~wired) | AUDIO_DEVICE_OUT_SPEAKER;
+}
+
 static int adev_open_output_stream(struct audio_hw_device* dev, audio_io_handle_t handle,
                                    audio_devices_t devices, audio_output_flags_t flags,
                                    struct audio_config* config,
@@ -78,7 +91,8 @@ static int adev_open_output_stream(struct audio_hw_device* dev, audio_io_handle_
     int rc;
 
     to_amazon_config(config, &amazon_config);
-    rc = ctx->amazon_device->open_output_stream(ctx->amazon_device, handle, devices, flags,
+    rc = ctx->amazon_device->open_output_stream(ctx->amazon_device, handle,
+                                                remap_output_devices(ctx, devices), flags,
                                                 &amazon_config, stream_out, address);
     from_amazon_config(&amazon_config, config);
 
@@ -321,8 +335,12 @@ static int adev_create_audio_patch(struct audio_hw_device* dev, unsigned int num
         struct amazon_audio_port_config amazon_sinks[AUDIO_PATCH_PORTS_MAX];
         for (int i = 0; i < num_sources; i++)
             to_amazon_port_config(&patch_record->patch.sources[i], &amazon_sources[i]);
-        for (int i = 0; i < num_sinks; i++)
+        for (int i = 0; i < num_sinks; i++) {
             to_amazon_port_config(&patch_record->patch.sinks[i], &amazon_sinks[i]);
+            if (amazon_sinks[i].type == AUDIO_PORT_TYPE_DEVICE)
+                amazon_sinks[i].ext.device.type =
+                        remap_output_devices(ctx, amazon_sinks[i].ext.device.type);
+        }
 
         status = ctx->amazon_device->create_audio_patch(ctx->amazon_device, num_sources,
                                                         amazon_sources, num_sinks, amazon_sinks,
@@ -406,6 +424,7 @@ static int adev_open(const hw_module_t* module, const char* name, hw_device_t** 
     list_init(&adev->audio_patch_record_list);
     adev->next_patch_handle = AUDIO_PATCH_HANDLE_NONE;
     adev->hw_module = 1;
+    adev->headphone_as_speaker = property_get_bool("ro.audiohal.headphone_as_speaker", false);
 
     // Get the Amazon audio module
     rc = hw_get_module_by_class(AUDIO_HARDWARE_MODULE_ID, "primary_amazon",
