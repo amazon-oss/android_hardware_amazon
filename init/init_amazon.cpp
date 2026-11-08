@@ -26,6 +26,12 @@ struct AmonetLink {
     bool optional;
 };
 
+constexpr AmonetLink kMt8127Links[] = {
+        {"UBOOT", "UBOOT_real", true, false},
+        {"TEE1", "TEE1_real", true, false},
+        {"TEE2", "TEE2_real", true, false},
+};
+
 constexpr AmonetLink kMt8163Links[] = {
         {"boot", "boot_amonet", false, false}, {"recovery", "recovery_amonet", false, false},
         {"boot_x", "boot", false, false},      {"recovery_x", "recovery", false, false},
@@ -76,5 +82,6 @@ void SetupAmonetLinks(const AmonetLink (&links)[N]) {
 }  // namespace
 
 void vendor_load_properties() {
+    SetupAmonetLinks(kMt8127Links);
     SetupAmonetLinks(kMt8163Links);
 }
