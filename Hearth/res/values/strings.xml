@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: The LineageOS Project
+  SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Hearth</string>
+    <string name="amazon_remote">Amazon Fire TV remote</string>
+    <string name="amazon_game_controller">Amazon Fire game controller</string>
+    <string name="device_connected"><xliff:g id="name" example="Amazon Fire TV remote">%1$s</xliff:g> connected</string>
+
+    <!-- Settings -->
+    <string name="remotes_title">Remotes</string>
+    <string name="hardware_title">Hardware</string>
+
+    <!-- Remotes -->
+    <string name="pair_remote_title">Pair a remote</string>
+    <string name="pair_remote_summary">Fire TV remotes and game controllers, over Bluetooth or Wi-Fi Direct</string>
+    <string name="pair_remote_started">Press and hold Home on the remote for 10 seconds</string>
+    <string name="remote_connected">Connected</string>
+    <string name="remote_battery">Battery <xliff:g id="level" example="72">%1$d</xliff:g>%%</string>
+    <string name="remote_battery_charging">Charging, <xliff:g id="level" example="72">%1$d</xliff:g>%%</string>
+    <string name="low_battery_alerts_title">Low battery alerts</string>
+    <string name="low_battery_alerts_summary">Warn when a remote or controller is running low</string>
+    <string name="battery_low_title"><xliff:g id="name" example="Amazon Fire TV Remote">%1$s</xliff:g> is running low</string>
+    <string name="battery_low_text"><xliff:g id="level" example="12">%1$d</xliff:g>%% battery left. Charge it or replace the batteries soon.</string>
+
+    <!-- Status LED -->
+    <string name="status_led_title">Status LED</string>
+    <string name="status_led_summary">Show pairing, missing internet connection and boot status on the front LED</string>
+
+    <!-- USB -->
+    <string name="usb_device_mode_title">USB device mode</string>
+    <string name="usb_device_mode_summary">Use the USB port to connect to a computer for debugging. USB accessories and storage stop working while this is enabled</string>
+
+    <!-- Setup -->
+    <string name="setup_breadcrumb">Setup</string>
+    <string name="setup_continue">Continue</string>
+    <string name="setup_skip">Skip</string>
+    <string name="setup_finish">Finish</string>
+    <string name="setup_remote_title">Pair your remote</string>
+    <string name="setup_remote_summary">Press and hold Home on your Fire TV remote or game controller for 10 seconds.</string>
+    <string name="setup_remote_searching">Looking for remotes</string>
+    <string name="setup_remote_searching_summary">Over Bluetooth and Wi-Fi Direct</string>
+    <string name="setup_network_title">Connect to the internet</string>
+    <string name="setup_network_summary">Connect to a Wi-Fi network or plug in an Ethernet cable.</string>
+    <string name="setup_network_ethernet">Connected over Ethernet.</string>
+    <string name="setup_network_wifi_connected">Connected to <xliff:g id="ssid" example="Home">%1$s</xliff:g>.</string>
+    <string name="setup_network_wifi">Set up Wi-Fi</string>
+    <string name="setup_network_change">Choose another network</string>
+    <string name="setup_done_title">You\'re all set</string>
+    <string name="setup_done_summary">More remotes and controllers can be paired from Hearth at any time.</string>
+</resources>
