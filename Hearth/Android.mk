@@ -34,6 +34,18 @@ LOCAL_AAPT_FLAGS := --auto-add-overlay \
 
 LOCAL_INIT_RC := hearth.rc
 
+LOCAL_OVERRIDES_PACKAGES := \
+    AudioFX \
+    CMAudioService \
+    Eleven \
+    ExactCalculator \
+    Exchange2 \
+    LiveWallpapersPicker \
+    LockClock \
+    WallpaperPicker \
+    WeatherManagerService \
+    WeatherProvider
+
 LOCAL_CERTIFICATE := platform
 LOCAL_PRIVILEGED_MODULE := true
 
