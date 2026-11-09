@@ -45,6 +45,14 @@ LOCAL_PROPRIETARY_MODULE := true
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_SRC_FILES := libcrypto/crypto.c
+LOCAL_MODULE := libcrypto_shim
+LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
+LOCAL_PROPRIETARY_MODULE := true
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_SRC_FILES := libgui/SensorManager.cpp
 LOCAL_SHARED_LIBRARIES := libgui libutils
 LOCAL_MODULE := libgui_shim
