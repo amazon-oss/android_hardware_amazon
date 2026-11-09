@@ -17,11 +17,17 @@
 #define LOG_TAG "Amazon Legacy PowerHAL"
 
 #include <errno.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
+#include <unistd.h>
 
 #include <utils/Log.h>
 #include <hardware/hardware.h>
@@ -29,18 +35,23 @@
 
 #define NUM_POLICIES 2
 #define MAX_BUF_SZ 64
+#define MAX_PATH_SZ 128
 
-static const char *scaling_governor_paths[NUM_POLICIES] = {
-    "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor",
-    "/sys/devices/system/cpu/cpu2/cpufreq/scaling_governor"
-};
+#define INTERACTION_BOOST_MS 500
+#define LAUNCH_BOOST_MS 5000
 
-static const char *io_is_busy_paths[NUM_POLICIES] = {
-    "/sys/devices/system/cpu/cpu0/cpufreq/%s/io_is_busy",
-    "/sys/devices/system/cpu/cpu2/cpufreq/%s/io_is_busy"
+static const char *policy_paths[NUM_POLICIES] = {
+    "/sys/devices/system/cpu/cpu0/cpufreq",
+    "/sys/devices/system/cpu/cpu2/cpufreq"
 };
 
 static char governor[NUM_POLICIES][MAX_BUF_SZ];
+
+static pthread_mutex_t boost_lock = PTHREAD_MUTEX_INITIALIZER;
+static timer_t boost_timer;
+static bool boost_timer_created;
+static bool boosted;
+static uint64_t boost_end_ms;
 
 static void sysfs_write(const char *path, const char *s) {
     int fd = open(path, O_WRONLY);
@@ -83,48 +94,151 @@ static int sysfs_read(const char *path, char *s, int num_bytes)
     return ret;
 }
 
-static int get_scaling_governor() {
-    int rc = 0;
+static void get_scaling_governor() {
+    char path[MAX_PATH_SZ];
 
     for (int policy = 0; policy < NUM_POLICIES; policy++) {
-        rc = sysfs_read(scaling_governor_paths[policy], governor[policy], MAX_BUF_SZ);
-        if (rc < 0)
-            break;
-    }
+        governor[policy][0] = '\0';
 
-    return rc;
+        snprintf(path, MAX_PATH_SZ, "%s/scaling_governor", policy_paths[policy]);
+        if (access(path, R_OK) == 0)
+            sysfs_read(path, governor[policy], MAX_BUF_SZ);
+    }
 }
 
 static void set_io_is_busy(int busy) {
-    int rc;
-    char path[MAX_BUF_SZ];
+    char path[MAX_PATH_SZ];
 
-    rc = get_scaling_governor();
-    if (rc < 0) {
-        ALOGE("%s: Failed to read current governors.", __func__);
-        return;
-    }
+    get_scaling_governor();
 
     for (int policy = 0; policy < NUM_POLICIES; policy++) {
-        snprintf(path, MAX_BUF_SZ, io_is_busy_paths[policy], governor[policy]);
+        if (governor[policy][0] == '\0')
+            continue;
+
+        snprintf(path, MAX_PATH_SZ, "%s/%s/io_is_busy", policy_paths[policy], governor[policy]);
+        if (access(path, W_OK) < 0)
+            snprintf(path, MAX_PATH_SZ, "/sys/devices/system/cpu/cpufreq/%s/io_is_busy",
+                     governor[policy]);
+        if (access(path, W_OK) < 0)
+            continue;
+
         sysfs_write(path, busy ? "1" : "0");
         ALOGD("%s: Set %s to %d", __func__, path, busy);
     }
 }
 
+static void set_min_freq_boost(bool boost) {
+    char path[MAX_PATH_SZ];
+    char freq[MAX_BUF_SZ];
+
+    for (int policy = 0; policy < NUM_POLICIES; policy++) {
+        snprintf(path, MAX_PATH_SZ, "%s/scaling_min_freq", policy_paths[policy]);
+        if (access(path, W_OK) < 0)
+            continue;
+
+        snprintf(path, MAX_PATH_SZ, "%s/%s", policy_paths[policy],
+                 boost ? "cpuinfo_max_freq" : "cpuinfo_min_freq");
+        if (sysfs_read(path, freq, MAX_BUF_SZ) < 0)
+            continue;
+
+        snprintf(path, MAX_PATH_SZ, "%s/scaling_min_freq", policy_paths[policy]);
+        sysfs_write(path, freq);
+    }
+}
+
+static uint64_t now_ms() {
+    struct timespec ts;
+
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1000ULL + ts.tv_nsec / 1000000;
+}
+
+static void end_boost() {
+    struct itimerspec ts = {};
+
+    pthread_mutex_lock(&boost_lock);
+
+    if (boost_timer_created)
+        timer_settime(boost_timer, 0, &ts, NULL);
+
+    if (boosted) {
+        set_min_freq_boost(false);
+        boosted = false;
+    }
+
+    pthread_mutex_unlock(&boost_lock);
+}
+
+static void boost(int duration_ms) {
+    uint64_t end = now_ms() + duration_ms;
+    struct itimerspec ts = {
+        .it_value = {
+            .tv_sec = duration_ms / 1000,
+            .tv_nsec = (duration_ms % 1000) * 1000000L,
+        },
+    };
+
+    if (!boost_timer_created || duration_ms <= 0)
+        return;
+
+    pthread_mutex_lock(&boost_lock);
+
+    if (!boosted || end > boost_end_ms) {
+        boost_end_ms = end;
+        timer_settime(boost_timer, 0, &ts, NULL);
+    }
+
+    if (!boosted) {
+        set_min_freq_boost(true);
+        boosted = true;
+    }
+
+    pthread_mutex_unlock(&boost_lock);
+}
+
+static void boost_timeout(union sigval sv __unused) {
+    end_boost();
+}
+
 static void power_init(struct power_module *module __unused)
 {
-    return;
+    struct sigevent sev = {
+        .sigev_notify = SIGEV_THREAD,
+        .sigev_notify_function = boost_timeout,
+    };
+
+    boost_timer_created = timer_create(CLOCK_MONOTONIC, &sev, &boost_timer) == 0;
+    if (!boost_timer_created)
+        ALOGE("Failed to create boost timer: %s", strerror(errno));
 }
 
 static void power_set_interactive(struct power_module *module __unused, int on) {
     ALOGD("%s: %s", __func__, on ? "ON" : "OFF");
 
     set_io_is_busy(on);
+
+    if (!on)
+        end_boost();
 }
 
-static void power_hint(struct power_module *module __unused, power_hint_t hint __unused,
-                       void *data __unused) {
+static void power_hint(struct power_module *module __unused, power_hint_t hint,
+                       void *data) {
+    switch (hint) {
+        case POWER_HINT_INTERACTION:
+            boost(INTERACTION_BOOST_MS);
+            break;
+        case POWER_HINT_CPU_BOOST:
+            boost(data ? *(int *)data / 1000 : INTERACTION_BOOST_MS);
+            break;
+        case POWER_HINT_LAUNCH:
+            if (data)
+                boost(LAUNCH_BOOST_MS);
+            else
+                end_boost();
+            break;
+        default:
+            break;
+    }
 }
 
 static void power_set_feature(struct power_module *module __unused, feature_t feature,
