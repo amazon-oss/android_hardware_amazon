@@ -6,6 +6,6 @@
 <resources>
 
     <!-- Whether stereo widening levels are supported -->
-    <bool name="dolby_stereo_widening_supported">true</bool>
+    <bool name="dolby_stereo_widening_supported">false</bool>
 
 </resources>

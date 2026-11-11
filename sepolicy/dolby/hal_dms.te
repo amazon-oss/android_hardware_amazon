@@ -16,5 +16,3 @@ hal_client_domain(mediacodec, hal_dms)
 
 allow hal_dms_default vendor_data_file:dir rw_dir_perms;
 allow hal_dms_default vendor_data_file:file create_file_perms;
-
-set_prop(hal_dms_default, vendor_audio_prop)
