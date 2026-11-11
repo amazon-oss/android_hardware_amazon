@@ -1,0 +1,10 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_shared {
+    name: "libswdap_shim",
+    srcs: ["property_get.cpp"],
+    vendor: true,
+}
