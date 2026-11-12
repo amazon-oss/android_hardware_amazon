@@ -27,6 +27,11 @@ class DolbyAudioEffect(priority: Int, audioSession: Int) :
             setIntParam(EFFECT_PARAM_PROFILE, value)
         }
 
+    fun setPregain(value: Int) {
+        dlog(TAG, "setPregain($value)")
+        checkStatus(setParameter(EFFECT_PARAM_PREGAIN, value))
+    }
+
     private fun setIntParam(param: Int, value: Int) {
         dlog(TAG, "setIntParam($param, $value)")
         val buf = ByteArray(12)
@@ -87,6 +92,7 @@ class DolbyAudioEffect(priority: Int, audioSession: Int) :
 
         private const val EFFECT_PARAM_ENABLE = 0
         private const val EFFECT_PARAM_CPDP_VALUES = 5
+        private const val EFFECT_PARAM_PREGAIN = 0x10
         private const val EFFECT_PARAM_PROFILE = 0xA000000
         private const val EFFECT_PARAM_SET_PROFILE_PARAMETER = 0x1000000
         private const val EFFECT_PARAM_GET_PROFILE_PARAMETER = 0x1000005
