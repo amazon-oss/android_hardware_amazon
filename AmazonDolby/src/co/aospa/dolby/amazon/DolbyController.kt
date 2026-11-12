@@ -6,7 +6,11 @@
 
 package co.aospa.dolby.amazon
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioAttributes
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -17,6 +21,7 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import co.aospa.dolby.amazon.DolbyConstants.Companion.dlog
 import co.aospa.dolby.amazon.DolbyConstants.DsParam
+import kotlin.math.pow
 
 internal class DolbyController private constructor(private val context: Context) {
     private var dolbyEffect = DolbyAudioEffect(EFFECT_PRIORITY, audioSession = 0)
@@ -52,6 +57,15 @@ internal class DolbyController private constructor(private val context: Context)
             }
         }
 
+    // Update pregain on media volume change
+    private val volumeReceiver =
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val stream = intent.getIntExtra(AudioManager.EXTRA_VOLUME_STREAM_TYPE, -1)
+                if (stream == AudioManager.STREAM_MUSIC) updatePregain()
+            }
+        }
+
     private var registerCallbacks = false
         set(value) {
             if (field == value) return
@@ -60,9 +74,17 @@ internal class DolbyController private constructor(private val context: Context)
             if (value) {
                 audioManager!!.registerAudioPlaybackCallback(playbackCallback, handler)
                 audioManager.registerAudioDeviceCallback(audioDeviceCallback, handler)
+                context.registerReceiver(
+                    volumeReceiver,
+                    IntentFilter(AudioManager.VOLUME_CHANGED_ACTION),
+                    null,
+                    handler,
+                    Context.RECEIVER_NOT_EXPORTED,
+                )
             } else {
                 audioManager!!.unregisterAudioPlaybackCallback(playbackCallback)
                 audioManager.unregisterAudioDeviceCallback(audioDeviceCallback)
+                context.unregisterReceiver(volumeReceiver)
             }
         }
 
@@ -165,6 +187,23 @@ internal class DolbyController private constructor(private val context: Context)
         dlog(TAG, "setCurrentProfile")
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
         profile = prefs.getString(DolbyConstants.PREF_PROFILE, "0" /*dynamic*/)!!.toInt()
+        updatePregain()
+    }
+
+    // DAP needs the volume applied before it for the volume leveler to work.
+    // AudioFlinger doesn't report it for global effects, so pass the media volume.
+    private fun updatePregain() {
+        val stream = AudioManager.STREAM_MUSIC
+        val index = audioManager!!.getStreamVolume(stream)
+        if (index == 0) return
+        val device =
+            audioManager.getAudioDevicesForAttributes(MEDIA_ATTRIBUTES).firstOrNull()?.type
+                ?: AudioDeviceInfo.TYPE_BUILTIN_SPEAKER
+        val db = audioManager.getStreamVolumeDb(stream, index, device)
+        val pregain = (10f.pow(db / 20f) * (1 shl 24)).toInt()
+        dlog(TAG, "updatePregain: index=$index device=$device db=$db pregain=$pregain")
+        checkEffect()
+        dolbyEffect.setPregain(pregain)
     }
 
     fun setDsOnAndPersist(dsOn: Boolean) {
@@ -304,6 +343,8 @@ internal class DolbyController private constructor(private val context: Context)
     companion object {
         private const val TAG = "DolbyController"
         private const val EFFECT_PRIORITY = 100
+        private val MEDIA_ATTRIBUTES =
+            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).build()
 
         @Volatile private var instance: DolbyController? = null
 
