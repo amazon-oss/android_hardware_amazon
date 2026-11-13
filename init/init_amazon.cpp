@@ -41,6 +41,13 @@ constexpr AmonetLink kMt8163Links[] = {
         {"boot0img0", "boot0img0_real", true, true}, {"boot0img1", "boot0img1_real", true, true},
 };
 
+constexpr AmonetLink kMt8173Links[] = {
+        {"boot", "boot_amonet", false, false}, {"recovery", "recovery_amonet", false, false},
+        {"boot_x", "boot", false, false},      {"recovery_x", "recovery", false, false},
+        {"lk", "lk_real", true, false},        {"TEE1", "TEE1_real", true, false},
+        {"TEE2", "TEE2_real", true, false},
+};
+
 void Remove(const std::string& path) {
     if (unlink(path.c_str()) && errno != ENOENT)
         ERROR("Failed to remove %s: %s\n", path.c_str(), strerror(errno));
@@ -84,4 +91,5 @@ void SetupAmonetLinks(const AmonetLink (&links)[N]) {
 void vendor_load_properties() {
     SetupAmonetLinks(kMt8127Links);
     SetupAmonetLinks(kMt8163Links);
+    SetupAmonetLinks(kMt8173Links);
 }
