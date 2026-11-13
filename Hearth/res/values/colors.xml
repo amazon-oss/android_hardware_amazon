@@ -5,4 +5,6 @@
 -->
 <resources>
     <color name="hearth_accent">#FFFF8A3D</color>
+    <color name="setup_background_start">#FF3A1C12</color>
+    <color name="setup_background_end">#FF120A08</color>
 </resources>

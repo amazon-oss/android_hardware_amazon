@@ -26,4 +26,20 @@
     <string name="usb_device_mode_title">USB device mode</string>
     <string name="usb_device_mode_summary">Use the USB port to connect to a computer for debugging. USB accessories and storage stop working while this is enabled</string>
 
+    <!-- Setup -->
+    <string name="setup_breadcrumb">Setup</string>
+    <string name="setup_continue">Continue</string>
+    <string name="setup_skip">Skip</string>
+    <string name="setup_finish">Finish</string>
+    <string name="setup_remote_title">Pair your remote</string>
+    <string name="setup_remote_summary">Press and hold Home on your Fire TV remote or game controller for 10 seconds.</string>
+    <string name="setup_remote_connected"><xliff:g id="name" example="Amazon Fire TV remote">%1$s</xliff:g> is connected.</string>
+    <string name="setup_network_title">Connect to the internet</string>
+    <string name="setup_network_summary">Connect to a Wi-Fi network or plug in an Ethernet cable.</string>
+    <string name="setup_network_ethernet">Connected over Ethernet.</string>
+    <string name="setup_network_wifi_connected">Connected to <xliff:g id="ssid" example="Home">%1$s</xliff:g>.</string>
+    <string name="setup_network_wifi">Set up Wi-Fi</string>
+    <string name="setup_network_change">Choose another network</string>
+    <string name="setup_done_title">You\'re all set</string>
+    <string name="setup_done_summary">More remotes and controllers can be paired from Hearth at any time.</string>
 </resources>

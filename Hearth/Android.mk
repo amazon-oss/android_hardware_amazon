@@ -40,8 +40,10 @@ LOCAL_OVERRIDES_PACKAGES := \
     Eleven \
     ExactCalculator \
     Exchange2 \
+    LineageSetupWizard \
     LiveWallpapersPicker \
     LockClock \
+    Provision \
     WallpaperPicker \
     WeatherManagerService \
     WeatherProvider

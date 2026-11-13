@@ -12,4 +12,9 @@
         <item name="android:colorAccent">@color/hearth_accent</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Leanback</item>
     </style>
+
+    <style name="Theme.Hearth.Setup" parent="@style/Theme.Leanback.GuidedStep">
+        <item name="android:windowBackground">@drawable/setup_background</item>
+        <item name="android:colorAccent">@color/hearth_accent</item>
+    </style>
 </resources>
