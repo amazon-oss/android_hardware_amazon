@@ -13,9 +13,11 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH_PRIVILEGED" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.INJECT_EVENTS" />
     <uses-permission android:name="android.permission.PEERS_MAC_ADDRESS" />
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
@@ -46,6 +48,7 @@
         </receiver>
 
         <service android:name=".led.LedService" />
+        <service android:name=".wifi.WifiRemoteService" />
 
         <receiver
             android:name=".bluetooth.PairingRequestReceiver"

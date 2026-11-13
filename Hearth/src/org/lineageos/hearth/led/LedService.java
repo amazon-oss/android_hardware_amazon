@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.lineageos.hearth.Features;
 import org.lineageos.hearth.SettingsActivity;
+import org.lineageos.hearth.wifi.WifiRemoteService;
 
 public class LedService extends Service
         implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -47,6 +48,7 @@ public class LedService extends Service
 
     private boolean mStandby;
     private boolean mBonding;
+    private boolean mRemotePairing;
     private boolean mDiscovering;
     private boolean mNoInternet;
     private int mPattern = -1;
@@ -69,6 +71,7 @@ public class LedService extends Service
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        filter.addAction(WifiRemoteService.ACTION_PAIRING_CHANGED);
         registerReceiver(mReceiver, filter);
 
         mConnectivityManager = getSystemService(ConnectivityManager.class);
@@ -125,6 +128,10 @@ public class LedService extends Service
                         mHandler.postDelayed(mBondTimeout, BLUETOOTH_TIMEOUT_MS);
                     }
                     break;
+                case WifiRemoteService.ACTION_PAIRING_CHANGED:
+                    mRemotePairing = intent.getBooleanExtra(WifiRemoteService.EXTRA_PAIRING,
+                            false);
+                    break;
             }
             update();
         }
@@ -175,7 +182,7 @@ public class LedService extends Service
         int pattern = PATTERN_OFF;
         if (!mPrefs.getBoolean(SettingsActivity.KEY_STATUS_LED, true) || mStandby) {
             pattern = PATTERN_OFF;
-        } else if (mBonding) {
+        } else if (mBonding || mRemotePairing) {
             pattern = PATTERN_WHITE_BLINK;
         } else if (mDiscovering) {
             pattern = PATTERN_WHITE_BREATHE;

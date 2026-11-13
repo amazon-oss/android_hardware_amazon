@@ -10,7 +10,13 @@
     <string name="device_connected"><xliff:g id="name" example="Amazon Fire TV remote">%1$s</xliff:g> connected</string>
 
     <!-- Settings -->
+    <string name="remotes_title">Remotes</string>
     <string name="hardware_title">Hardware</string>
+
+    <!-- Remotes -->
+    <string name="pair_remote_title">Pair a remote</string>
+    <string name="pair_remote_summary">Fire TV remotes and game controllers, over Bluetooth or Wi-Fi Direct</string>
+    <string name="pair_remote_started">Press and hold Home on the remote for 10 seconds</string>
 
     <!-- Status LED -->
     <string name="status_led_title">Status LED</string>

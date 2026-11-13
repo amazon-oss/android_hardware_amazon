@@ -7,6 +7,10 @@
 on post-fs-data && property:ro.hearth.led_pattern=*
     write ${ro.hearth.led_pattern} 5
 
+# Wi-Fi remotes
+on boot && property:ro.hearth.ozwpan_iface=*
+    insmod /system/lib/modules/ozwpan.ko g_net_dev=${ro.hearth.ozwpan_iface}
+
 # USB role
 on property:persist.sys.usb.debugging=y && property:ro.hearth.usb_role=*
     write ${ro.hearth.usb_role} 0

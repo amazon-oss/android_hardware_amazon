@@ -16,12 +16,14 @@ import android.support.v17.preference.LeanbackSettingsFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceScreen;
+import android.widget.Toast;
 
 public class SettingsActivity extends Activity {
 
     public static final String KEY_STATUS_LED = "status_led";
 
     private static final String KEY_HARDWARE = "hardware";
+    private static final String KEY_PAIR_REMOTE = "pair_remote";
     private static final String KEY_USB_DEVICE_MODE = "usb_device_mode";
     private static final String PROP_USB_DEVICE_MODE = "persist.sys.usb.debugging";
 
@@ -79,6 +81,17 @@ public class SettingsActivity extends Activity {
             if (hardware.getPreferenceCount() == 0) {
                 getPreferenceScreen().removePreference(hardware);
             }
+        }
+
+        @Override
+        public boolean onPreferenceTreeClick(Preference preference) {
+            if (KEY_PAIR_REMOTE.equals(preference.getKey())) {
+                Pairing.start(getActivity());
+                Toast.makeText(getActivity(), R.string.pair_remote_started,
+                        Toast.LENGTH_LONG).show();
+                return true;
+            }
+            return super.onPreferenceTreeClick(preference);
         }
 
         @Override

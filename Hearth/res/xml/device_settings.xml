@@ -7,6 +7,17 @@
     android:title="@string/app_name">
 
     <PreferenceCategory
+        android:key="remotes"
+        android:title="@string/remotes_title">
+
+        <Preference
+            android:key="pair_remote"
+            android:title="@string/pair_remote_title"
+            android:summary="@string/pair_remote_summary" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:key="hardware"
         android:title="@string/hardware_title">
 

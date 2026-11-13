@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.lineageos.hearth.led.LedService;
+import org.lineageos.hearth.wifi.WifiRemoteService;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -17,6 +18,9 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Features.hasLed()) {
             context.startService(new Intent(context, LedService.class));
+        }
+        if (Features.hasWifiRemotes()) {
+            context.startService(new Intent(context, WifiRemoteService.class));
         }
     }
 }

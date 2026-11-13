@@ -39,8 +39,8 @@ public class PairingService extends Service {
 
     private static final String TAG = "RemotePairing";
 
-    static final String ACTION_UPDATE = "org.lineageos.hearth.bluetooth.action.UPDATE";
-    static final String EXTRA_OPEN_WINDOW = "open_window";
+    public static final String ACTION_UPDATE = "org.lineageos.hearth.bluetooth.action.UPDATE";
+    public static final String EXTRA_OPEN_WINDOW = "open_window";
 
     private static final int MODE_IDLE = 0;
     private static final int MODE_ASSIST = 1;
