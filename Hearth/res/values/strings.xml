@@ -8,4 +8,16 @@
     <string name="amazon_remote">Amazon Fire TV remote</string>
     <string name="amazon_game_controller">Amazon Fire game controller</string>
     <string name="device_connected"><xliff:g id="name" example="Amazon Fire TV remote">%1$s</xliff:g> connected</string>
+
+    <!-- Settings -->
+    <string name="hardware_title">Hardware</string>
+
+    <!-- Status LED -->
+    <string name="status_led_title">Status LED</string>
+    <string name="status_led_summary">Show pairing, missing internet connection and boot status on the front LED</string>
+
+    <!-- USB -->
+    <string name="usb_device_mode_title">USB device mode</string>
+    <string name="usb_device_mode_summary">Use the USB port to connect to a computer for debugging. USB accessories and storage stop working while this is enabled</string>
+
 </resources>

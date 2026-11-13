@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SPDX-FileCopyrightText: The LineageOS Project
+  SPDX-License-Identifier: Apache-2.0
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/app_name">
+
+    <PreferenceCategory
+        android:key="hardware"
+        android:title="@string/hardware_title">
+
+        <SwitchPreference
+            android:key="status_led"
+            android:defaultValue="true"
+            android:title="@string/status_led_title"
+            android:summary="@string/status_led_summary" />
+
+        <SwitchPreference
+            android:key="usb_device_mode"
+            android:persistent="false"
+            android:title="@string/usb_device_mode_title"
+            android:summary="@string/usb_device_mode_summary" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

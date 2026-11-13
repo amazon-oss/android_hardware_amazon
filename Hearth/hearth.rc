@@ -1,0 +1,15 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Status LED
+on post-fs-data && property:ro.hearth.led_pattern=*
+    write ${ro.hearth.led_pattern} 5
+
+# USB role
+on property:persist.sys.usb.debugging=y && property:ro.hearth.usb_role=*
+    write ${ro.hearth.usb_role} 0
+
+on property:persist.sys.usb.debugging=n && property:ro.hearth.usb_role=*
+    write ${ro.hearth.usb_role} 1
