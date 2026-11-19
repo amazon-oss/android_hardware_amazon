@@ -29,6 +29,14 @@
         </interface>
     </hal>
     <hal format="hidl" optional="true">
+        <name>fireos.hardware.idme</name>
+        <version>1.0-1</version>
+        <interface>
+            <name>IIdme</name>
+            <instance>default</instance>
+        </interface>
+    </hal>
+    <hal format="hidl" optional="true">
         <name>vendor.dolby.ms12</name>
         <version>1.0-2</version>
         <interface>

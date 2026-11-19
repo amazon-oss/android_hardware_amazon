@@ -1,0 +1,11 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+service vendor.idme-hal /vendor/bin/hw/fireos.hardware.idme@1.1-service
+    interface fireos.hardware.idme@1.0::IIdme default
+    interface fireos.hardware.idme@1.1::IIdme default
+    class hal
+    user system
+    group system

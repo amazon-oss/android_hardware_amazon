@@ -1,0 +1,2 @@
+# IDME
+genfscon proc /idme u:object_r:vendor_proc_idme:s0

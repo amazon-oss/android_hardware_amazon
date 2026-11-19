@@ -1,0 +1,17 @@
+type hal_idme_hwservice, hwservice_manager_type, protected_hwservice;
+
+type hal_idme_default, domain;
+hal_server_domain(hal_idme_default, hal_idme)
+
+type hal_idme_default_exec, exec_type, vendor_file_type, file_type;
+init_daemon_domain(hal_idme_default)
+
+hal_attribute_hwservice(hal_idme, hal_idme_hwservice)
+
+binder_call(hal_idme_client, hal_idme_server)
+binder_call(hal_idme_server, hal_idme_client)
+
+r_dir_file(hal_idme_default, vendor_proc_idme)
+
+allow hal_idme_default block_device:dir search;
+allow hal_idme_default preloader_block_device:blk_file { open read };

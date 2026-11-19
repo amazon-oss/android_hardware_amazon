@@ -1,0 +1,4 @@
+# IDME
+attribute hal_idme;
+attribute hal_idme_client;
+attribute hal_idme_server;

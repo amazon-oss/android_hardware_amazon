@@ -1,0 +1,2 @@
+# HALs
+/(vendor|odm)/bin/hw/fireos\.hardware\.idme@1\.1-service   u:object_r:hal_idme_default_exec:s0
