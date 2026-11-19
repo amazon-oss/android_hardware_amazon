@@ -1,0 +1,11 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+sh_binary {
+    name: "init.btmac.sh",
+    src: "init.btmac.sh",
+    init_rc: ["init.btmac.rc"],
+    vendor: true,
+}

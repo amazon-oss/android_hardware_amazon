@@ -1,0 +1,14 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+on post-fs-data
+    mkdir /data/vendor/bluetooth 0770 bluetooth bluetooth
+    start vendor.btmac
+
+service vendor.btmac /vendor/bin/init.btmac.sh
+    user bluetooth
+    group bluetooth
+    disabled
+    oneshot
