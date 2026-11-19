@@ -1,1 +1,3 @@
+fireos.hardware.audio::IDevicesFactory                          u:object_r:hal_audio_hwservice:s0
+fireos.hardware.audiosignalprocessor::IHalAudioSignalProcessor  u:object_r:hal_audio_hwservice:s0
 fireos.hardware.idme::IIdme                                     u:object_r:hal_idme_hwservice:s0
